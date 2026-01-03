@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SurveyApp.Application.Features.Brands;
 using SurveyApp.Application.Features.Surveys.Commands.Create;
 using SurveyApp.Application.Features.Surveys.Commands.Delete;
 using SurveyApp.Application.Features.Surveys.Commands.Update;
 using SurveyApp.Application.Features.Surveys.Queries.GetById;
 using SurveyApp.Application.Features.Surveys.Queries.GetList;
+using SurveyApp.Application.Features.Surveys.Queries.GetUserActiveSurveys;
+using System.Security.Claims;
 
 namespace SurveyApp.WebApi.Controllers;
 
@@ -52,4 +53,32 @@ public class SurveysController : BaseController
 		return Ok(result);
 	}
 
+	// -------------------------------
+	// Kullanıcıya atanmış aktif anketleri listeleme
+	// -------------------------------
+	[HttpGet]
+	public async Task<IActionResult> GetUserActiveSurveys([FromQuery] int userId)
+	{
+		//TO DO:var userId = int.Parse(User.Claims.First(c => c.Type == "sub").Value);
+
+		var query = new GetUserActiveSurveysQuery { UserId = userId };
+		var result = await Mediator.Send(query);
+		return Ok(result);
+	}
+
+	//[HttpGet("user-active")]
+	//public async Task<IActionResult> GetUserActiveSurveys()
+	//{
+	//	// JWT token’dan userId al
+	//	var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+	//	if (userIdClaim == null)
+	//		return Unauthorized("UserId not found in token.");
+
+	//	var userId = int.Parse(userIdClaim.Value);
+
+	//	var query = new GetUserActiveSurveysQuery { UserId = userId };
+	//	var result = await Mediator.Send(query);
+
+	//	return Ok(result);
+	//}
 }

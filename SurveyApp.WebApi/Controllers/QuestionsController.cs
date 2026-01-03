@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using SurveyApp.Application.Features.AnswerTemplates.Queries.GetById;
+﻿using Microsoft.AspNetCore.Mvc;
 using SurveyApp.Application.Features.Questions.Commands.Create;
 using SurveyApp.Application.Features.Questions.Commands.Delete;
 using SurveyApp.Application.Features.Questions.Commands.Update;

@@ -5,7 +5,7 @@ using SurveyApp.Application.Features.AnswerTemplates.Commands.Delete;
 using SurveyApp.Application.Features.AnswerTemplates.Commands.Update;
 using SurveyApp.Application.Features.AnswerTemplates.Queries.GetById;
 using SurveyApp.Application.Features.AnswerTemplates.Queries.GetList;
-using SurveyApp.Application.Features.Surveys.Queries.GetById;
+
 
 
 namespace SurveyApp.WebApi.Controllers
