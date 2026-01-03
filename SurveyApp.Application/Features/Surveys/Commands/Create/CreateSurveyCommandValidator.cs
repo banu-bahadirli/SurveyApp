@@ -12,8 +12,8 @@ namespace SurveyApp.Application.Features.Surveys.Commands.Create
 		public CreateSurveyCommandValidator()
 		{
 
-			RuleFor(c=>c.Title).NotEmpty().MinimumLength(10);
-			RuleFor(c => c.Description).NotEmpty().MinimumLength(20);
+			RuleFor(c=>c.Title).NotEmpty().MinimumLength(20);
+			RuleFor(c => c.Description).NotEmpty().MinimumLength(50);
 		}
 	}
 }
