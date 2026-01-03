@@ -1,58 +1,54 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using SurveyApp.Core.Persistance.Repositories;
+using SurveyApp.Application.Services.Repositories;
 using SurveyApp.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace SurveyApp.Application.Features.Surveys.Queries.GetUserActiveSurveys;
-
-public class GetUserActiveSurveysQuery : IRequest<List<GetUserActiveSurveyResponse>>
+namespace SurveyApp.Application.Features.Surveys.Queries.GetUserActiveSurveys
 {
-	public int UserId { get; init; }
-
-	public class GetUserActiveSurveysQueryHandler
-		: IRequestHandler<GetUserActiveSurveysQuery, List<GetUserActiveSurveyResponse>>
+	public class GetUserActiveSurveysQuery : IRequest<List<GetUserActiveSurveyResponse>>
 	{
-		private readonly IAsyncRepository<UserSurvey, int> _userSurveyRepository;
-		private readonly IMapper _mapper;
+		public int UserId { get; init; }
 
-		public GetUserActiveSurveysQueryHandler(
-			IAsyncRepository<UserSurvey, int> userSurveyRepository,
-			IMapper mapper)
+		public class GetUserActiveSurveysQueryHandler
+			: IRequestHandler<GetUserActiveSurveysQuery, List<GetUserActiveSurveyResponse>>
 		{
-			_userSurveyRepository = userSurveyRepository;
-			_mapper = mapper;
-		}
+			private readonly IUserSurveyRepository _userSurveyRepository;
+			private readonly IMapper _mapper;
 
-		public async Task<List<GetUserActiveSurveyResponse>> Handle(
-			GetUserActiveSurveysQuery request,
-			CancellationToken cancellationToken)
-		{
-			var now = DateTime.UtcNow;
+			public GetUserActiveSurveysQueryHandler(
+				IUserSurveyRepository userSurveyRepository,
+				IMapper mapper)
+			{
+				_userSurveyRepository = userSurveyRepository;
+				_mapper = mapper;
+			}
 
-			// Kullanıcıya atanmış aktif anketleri çek
-			var userSurveys = await _userSurveyRepository.GetListNoPaginationAsync(
-				predicate: us =>
-					us.UserId == request.UserId &&
-					!us.IsCompleted &&
-					us.DeletedDate == null &&
-					us.Survey != null &&
-					us.Survey.IsActive &&
-					us.Survey.StartDate <= now &&
-					us.Survey.EndDate >= now,
-				include: q => q.Include(us => us.Survey),
-				enableTracking: false,
-				cancellationToken: cancellationToken
-			);
+			public async Task<List<GetUserActiveSurveyResponse>> Handle(
+				GetUserActiveSurveysQuery request,
+				CancellationToken cancellationToken)
+			{
+				var now = DateTime.UtcNow;
 
-			// Mapper ile response DTO’ya dönüştür
-			var response = _mapper.Map<List<GetUserActiveSurveyResponse>>(userSurveys);
-			return response;
+				// Kullanıcıya atanmış ve aktif olan anketleri çek
+				var userSurveys = await _userSurveyRepository.GetListNoPaginationAsync(
+					predicate: us =>
+						us.UserId == request.UserId &&
+						!us.IsCompleted &&
+						us.DeletedDate == null &&
+						us.Survey != null &&
+						us.Survey.IsActive &&
+						us.Survey.StartDate <= now &&
+						us.Survey.EndDate >= now,
+					include: q => q.Include(us => us.Survey),
+					enableTracking: false,
+					cancellationToken: cancellationToken
+				);
+
+				// Mapper ile response DTO’ya dönüştür
+				var response = _mapper.Map<List<GetUserActiveSurveyResponse>>(userSurveys);
+				return response;
+			}
 		}
 	}
 }

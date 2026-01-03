@@ -11,5 +11,6 @@ namespace SurveyApp.Application.Features.Surveys.Constants
 		public const string SurveyCreated = "Anket başarıyla oluşturuldu";
 		public const string SurveyDeleted = "Anket başarıyla silindi";
 		public const string SurveyTitleExists = "Anket başlığı zaten mevcut";
+		public const string SurveyAnswerCompleted = "Anket başarıyla doluruldu";
 	}
 }
