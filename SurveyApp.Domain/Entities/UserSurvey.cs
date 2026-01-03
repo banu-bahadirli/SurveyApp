@@ -17,4 +17,7 @@ public class UserSurvey : Entity<int>
 	public Survey? Survey { get; set; }
 
 	public bool IsCompleted { get; set; }
+
+	// Kullanıcının cevaplarını tutan koleksiyon
+	public ICollection<UserSurveyAnswer> Answers { get; set; } = new List<UserSurveyAnswer>();
 }

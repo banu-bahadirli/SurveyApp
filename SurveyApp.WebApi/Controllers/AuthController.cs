@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SurveyApp.Application.Features.Auth.Login.Commands;
-using SurveyApp.Application.Features.Brands;
 
 namespace SurveyApp.WebApi.Controllers
 {
