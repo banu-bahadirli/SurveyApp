@@ -39,7 +39,7 @@ namespace SurveyApp.Application.Features.Surveys.Queries.GetUserActiveSurveys
 						us.Survey != null &&
 						us.Survey.IsActive &&
 						us.Survey.StartDate.Date <= today &&
-						us.Survey.EndDate.Date >= today, // Saat kısmını tamamen görmezden gel
+						us.Survey.EndDate.Date >= today, 
 					include: q => q.Include(us => us.Survey),
 					enableTracking: false,
 					cancellationToken: cancellationToken
