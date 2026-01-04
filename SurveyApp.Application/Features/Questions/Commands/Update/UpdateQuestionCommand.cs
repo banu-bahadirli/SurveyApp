@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
+using SurveyApp.Application.Features.AnswerTemplates.Commands.Update;
+using SurveyApp.Application.Features.AnswerTemplates.Constants;
 using SurveyApp.Application.Features.Questions.Constants;
 using SurveyApp.Application.Features.Surveys.Commands.Update;
 using SurveyApp.Application.Services.Repositories;
@@ -29,22 +31,21 @@ namespace SurveyApp.Application.Features.Questions.Commands.Update
 
 		public async Task<UpdatedQuestionResponse> Handle(UpdateQuestionCommand request, CancellationToken cancellationToken)
 		{
-			// Mevcut survey'i al
+
 			var question = await _questionRespository.GetAsync(
 				predicate: b => b.Id == request.Id,
 				cancellationToken: cancellationToken
 			);
 
 			if (question == null)
-				throw new Exception("Soru bulunamadı"); // Daha sonra özel NotFoundException kullanabilirsin
+				return new UpdatedQuestionResponse
+				{
+					Success = false,
+					Message = QuestionMessages.QuestionNotFound
+				};
 
-			// Gelen request verilerini mevcut survey'e map et
 			_mapper.Map(request, question);
-
-			// Güncellenmiş survey'i kaydet
 			await _questionRespository.UpdateAsync(question, cancellationToken);
-
-			// Response DTO'ya map et ve döndür
 			var response = _mapper.Map<UpdatedQuestionResponse>(question);
 			response.Success = true;
 			response.Message = QuestionMessages.OuestioneUpdated;

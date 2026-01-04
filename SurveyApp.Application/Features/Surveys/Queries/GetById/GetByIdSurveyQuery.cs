@@ -1,37 +1,50 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using SurveyApp.Application.Services.Repositories;
 using SurveyApp.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SurveyApp.Application.Features.Surveys.Queries.GetById;
-public class GetByIdSurveyQuery : IRequest<GetByIdSurveyResponse>
+namespace SurveyApp.Application.Features.Surveys.Queries.GetById
 {
-	public int Id { get; set; }
-
-	public class GetByIdSurveyQueryHandler : IRequestHandler<GetByIdSurveyQuery, GetByIdSurveyResponse>
+	public class GetByIdSurveyQuery : IRequest<GetByIdSurveyResponse>
 	{
-		private readonly ISurveyRepository _surveyRepository;
-		private readonly IMapper _mapper;
+		public int Id { get; set; }
 
-		public GetByIdSurveyQueryHandler(ISurveyRepository surveyRepository, IMapper mapper)
+		public class GetByIdSurveyQueryHandler : IRequestHandler<GetByIdSurveyQuery, GetByIdSurveyResponse>
 		{
-			_surveyRepository = surveyRepository;
-			_mapper = mapper;
-		}
-		public async Task<GetByIdSurveyResponse> Handle(GetByIdSurveyQuery request, CancellationToken cancellationToken)
-		{
-			Survey? survey = await _surveyRepository.GetAsync(predicate: b => b.Id == request.Id, withDeleted: true, cancellationToken: cancellationToken);
+			private readonly ISurveyRepository _surveyRepository;
+			private readonly IMapper _mapper;
 
-			GetByIdSurveyResponse response = _mapper.Map<GetByIdSurveyResponse>(survey);
+			public GetByIdSurveyQueryHandler(
+				ISurveyRepository surveyRepository,
+				IMapper mapper)
+			{
+				_surveyRepository = surveyRepository;
+				_mapper = mapper;
+			}
 
-			return response;
+			public async Task<GetByIdSurveyResponse> Handle(
+				GetByIdSurveyQuery request,
+				CancellationToken cancellationToken)
+			{
+				Survey? survey = await _surveyRepository.GetAsync(
+					predicate: s => s.Id == request.Id,
+					include: q => q
+						.Include(s => s.UserSurveys)
+						.Include(s => s.SurveyQuestions),
+					withDeleted: false, 
+					cancellationToken: cancellationToken
+				);
+
+				if (survey == null)
+					return null!; 
+
+
+				GetByIdSurveyResponse response = _mapper.Map<GetByIdSurveyResponse>(survey);
+				response.UserIds = survey.UserSurveys.Select(us => us.UserId).ToList();
+				response.QuestionIds = survey.SurveyQuestions.Select(sq => sq.QuestionId).ToList();
+				return response;
+			}
 		}
 	}
-
-
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using SurveyApp.Application.Features.AnswerTemplates.Commands.Delete;
 using SurveyApp.Application.Features.Questions.Constants;
 using SurveyApp.Application.Features.Questions.Rules;
 using SurveyApp.Application.Services.Repositories;
@@ -10,8 +11,8 @@ namespace SurveyApp.Application.Features.Questions.Commands.Create;
 
 public class CreateQuestionCommand : IRequest<CreatedQuestionResponse>
 {
-	public string Text { get; set; } = string.Empty;        // Soru metni
-	public int AnswerTemplateId { get; set; }               // Önceden tanımlanmış şablon
+	public string Text { get; set; } = string.Empty;      
+	public int AnswerTemplateId { get; set; }             
 
 	public class CreateQuestionCommandHandler : IRequestHandler<CreateQuestionCommand, CreatedQuestionResponse>
 	{
@@ -31,7 +32,15 @@ public class CreateQuestionCommand : IRequest<CreatedQuestionResponse>
 
 		public async Task<CreatedQuestionResponse> Handle(CreateQuestionCommand command, CancellationToken cancellationToken)
 		{
-			await _questionBusinessRules.AnswerTemplateMustExist(command.AnswerTemplateId);
+			var businessMessage =  await _questionBusinessRules.AnswerTemplateMustExist(command.AnswerTemplateId);
+			if (businessMessage != null)
+			{
+				return new CreatedQuestionResponse
+				{
+					Success = false,
+					Message = businessMessage
+				};
+			}
 
 			var question = _mapper.Map<Question>(command);
 			var createdQuestion = await _questionRespository.AddAsync(question);

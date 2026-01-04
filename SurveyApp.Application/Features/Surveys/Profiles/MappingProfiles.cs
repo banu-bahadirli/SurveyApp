@@ -14,7 +14,6 @@ namespace SurveyApp.Application.Features.Surveys.Profiles
 	{
 		public MappingProfiles()
 		{
-			// CRUD Commands
 			CreateMap<Survey, CreateSurveyCommand>().ReverseMap();
 			CreateMap<Survey, CreatedSurveyResponse>().ReverseMap();
 
@@ -24,22 +23,16 @@ namespace SurveyApp.Application.Features.Surveys.Profiles
 			CreateMap<Survey, DeleteSurveyCommand>().ReverseMap();
 			CreateMap<Survey, DeletedSurveyResponse>().ReverseMap();
 
-			// GetById
 			CreateMap<Survey, GetByIdSurveyResponse>()
 				.ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.ToString("yyyy-MM-dd")))
 				.ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate.ToString("yyyy-MM-dd")));
 
-			// GetList
 			CreateMap<Survey, GetListSurveyResponse>()
 				.ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.ToString("yyyy-MM-dd")))
 				.ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate.ToString("yyyy-MM-dd")));
 
-			// Pagination
 			CreateMap<Paginate<Survey>, Paginate<GetListSurveyResponse>>();
 
-			// -------------------------------
-			// UserSurvey → GetUserActiveSurveyResponse
-			// -------------------------------
 			CreateMap<UserSurvey, GetUserActiveSurveyResponse>()
 				.ForMember(dest => dest.SurveyId, opt => opt.MapFrom(src => src.Survey!.Id))
 				.ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Survey!.Title))

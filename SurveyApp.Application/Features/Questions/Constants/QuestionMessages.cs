@@ -2,8 +2,10 @@
 {
 	public static class QuestionMessages
 	{
-		public const string QuestionDeleted = "Cevap şablonu başarıyla silindi.";
-		public const string OuestioneUpdated = "Cevap şablonu başarıyla güncellendi.";
-		public const string QuestionCreated = "Cevap şablonu başarıyla kaydedildi.";
+		public const string QuestionDeleted = "Soru başarıyla silindi.";
+		public const string OuestioneUpdated = "Soru başarıyla güncellendi.";
+		public const string QuestionCreated = "Soru başarıyla kaydedildi.";
+		public const string QuestionNotFound = "Soru bulunamadı.";
+		public const string SelectedTemplateNotFound = "Seçilen cevap şablonu bulunamadı";
 	}
 }
