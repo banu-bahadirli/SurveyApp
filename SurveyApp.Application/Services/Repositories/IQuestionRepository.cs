@@ -3,7 +3,7 @@ using SurveyApp.Domain.Entities;
 
 namespace SurveyApp.Application.Services.Repositories
 {
-	public interface IQuestionRespository : IAsyncRepository<Question, int>
+	public interface IQuestionRepository : IAsyncRepository<Question, int>
 	{
 	}
 }

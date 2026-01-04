@@ -28,7 +28,7 @@ namespace SurveyApp.Persistance
 			services.AddScoped<IUserSurveyRepository, UserSurveyRepository>();
 			services.AddScoped<IUserSurveyAnswerRepository, UserSurveyAnswerRepository>();
 			services.AddScoped<IAnswerTemplateRepository, AnswerTemplateRepository>();
-			services.AddScoped<IQuestionRespository, QuestionRespository>();
+			services.AddScoped<IQuestionRepository, QuestionRepository>();
 			services.AddScoped<IUserSessionRepository, UserSessionRepository>();
 			services.AddScoped<ITransactionalRepository, EfTransactionalRepository<BaseDbContext>>();
 

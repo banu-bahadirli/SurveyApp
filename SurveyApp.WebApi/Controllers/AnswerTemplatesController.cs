@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SurveyApp.Application.Features.AnswerTemplates.Commands.Create;
 using SurveyApp.Application.Features.AnswerTemplates.Commands.Delete;
@@ -12,8 +13,23 @@ namespace SurveyApp.WebApi.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize(Roles = "Admin")]
 	public class AnswerTemplatesController : BaseController
 	{
+		[HttpGet]
+		public async Task<IActionResult> GetList([FromQuery] GetListAnswerTemplateQuery getListAnswerTemplateQuery)
+		{
+			var result = await Mediator.Send(getListAnswerTemplateQuery);
+			return Ok(result);
+		}
+
+		[HttpGet("{id}")]
+		public async Task<IActionResult> GetById([FromRoute] int id)
+		{
+			var query = new GetByIdAnswerTemplateQuery { Id = id };
+			var result = await Mediator.Send(query);
+			return Ok(result);
+		}
 
 		[HttpPost]
 		public async Task<IActionResult> Create([FromBody] CreateAnswerTemplateCommand createAnswerTemplateCommand)
@@ -37,19 +53,5 @@ namespace SurveyApp.WebApi.Controllers
 			return Ok(result);
 		}
 
-		[HttpGet]
-		public async Task<IActionResult> GetList([FromQuery] GetListAnswerTemplateQuery getListAnswerTemplateQuery)
-		{
-			var result = await Mediator.Send(getListAnswerTemplateQuery);
-			return Ok(result);
-		}
-
-		[HttpGet("{id}")]
-		public async Task<IActionResult> GetById([FromRoute] int id)
-		{
-			var query = new GetByIdAnswerTemplateQuery { Id = id };
-			var result = await Mediator.Send(query);
-			return Ok(result);
-		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using SurveyApp.Application.Features.AnswerTemplates.Constants;
+using SurveyApp.Application.Features.AnswerTemplates.Rules;
 using SurveyApp.Application.Services.Repositories;
 
 namespace SurveyApp.Application.Features.AnswerTemplates.Commands.Delete
@@ -8,35 +9,60 @@ namespace SurveyApp.Application.Features.AnswerTemplates.Commands.Delete
 	{
 		public int Id { get; set; }
 
-		public class DeleteAnswerTemplateCommandHandler : IRequestHandler<DeleteAnswerTemplateCommand, DeletedAnswerTemplateResponse>
+		public class DeleteAnswerTemplateCommandHandler
+			: IRequestHandler<DeleteAnswerTemplateCommand, DeletedAnswerTemplateResponse>
 		{
 			private readonly IAnswerTemplateRepository _answerTemplateRepository;
+			private readonly AnswerTemplateBusinessRules _businessRules;
 
-			public DeleteAnswerTemplateCommandHandler(IAnswerTemplateRepository answerTemplateRepository)
+			public DeleteAnswerTemplateCommandHandler(
+				IAnswerTemplateRepository answerTemplateRepository,
+				AnswerTemplateBusinessRules businessRules)
 			{
 				_answerTemplateRepository = answerTemplateRepository;
+				_businessRules = businessRules;
 			}
 
-			public async Task<DeletedAnswerTemplateResponse> Handle(DeleteAnswerTemplateCommand command, CancellationToken cancellationToken)
+			public async Task<DeletedAnswerTemplateResponse> Handle(
+				DeleteAnswerTemplateCommand command,
+				CancellationToken cancellationToken)
 			{
-				// Mevcut şablonu al
 				var answerTemplate = await _answerTemplateRepository.GetAsync(
-					c => c.Id == command.Id,
+					at => at.Id == command.Id,
 					cancellationToken: cancellationToken
 				);
 
 				if (answerTemplate == null)
-					throw new Exception("Cevap şablonu bulunamadı"); // Daha sonra NotFoundException ekleyebilirsin
+				{
+					return new DeletedAnswerTemplateResponse
+					{
+						Id = command.Id,
+						Success = false,
+						Message = AnswerTemplateMessages.AnswerTemplateNotFound
+					};
+				}
 
-				// Şablonu sil
-				await _answerTemplateRepository.DeleteAsync(answerTemplate,true);
+                #region Business Rule kontrolü
+				var businessMessage = await _businessRules.CanAnswerTemplateBeDeleted(command.Id);
 
-				// Response dön
+				if (businessMessage != null)
+				{
+					return new DeletedAnswerTemplateResponse
+					{
+						Id = command.Id,
+						Success = false,
+						Message = businessMessage
+					};
+				}
+				#endregion
+
+				await _answerTemplateRepository.DeleteAsync(answerTemplate, true);
+
 				return new DeletedAnswerTemplateResponse
 				{
 					Id = command.Id,
-					Message = AnswerTemplateMessages.AnswerTemplateDeleted,
-					Success = true
+					Success = true,
+					Message = AnswerTemplateMessages.AnswerTemplateDeleted
 				};
 			}
 		}

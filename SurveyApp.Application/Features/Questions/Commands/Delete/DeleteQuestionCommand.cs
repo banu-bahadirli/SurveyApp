@@ -12,11 +12,11 @@ namespace SurveyApp.Application.Features.Questions.Commands.Delete
 
 		public class DeleteQuestionCommandHandler : IRequestHandler<DeleteQuestionCommand, DeletedQuestionResponse>
 		{
-			private readonly IQuestionRespository _questionRespository;
+			private readonly IQuestionRepository _questionRespository;
 			private readonly IMapper _mapper;
 
 			public DeleteQuestionCommandHandler(
-				IQuestionRespository questionRespository,
+				IQuestionRepository questionRespository,
 			IMapper mapper)
 			{
 				_questionRespository = questionRespository;

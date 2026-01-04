@@ -12,11 +12,11 @@ namespace SurveyApp.Application.Features.Questions.Queries.GetList
 		public class GetListQuestionQueryHandler
 			: IRequestHandler<GetListQuestionQuery, List<GetListQuestionResponse>>
 		{
-			private readonly IQuestionRespository _questionRespository;
+			private readonly IQuestionRepository _questionRespository;
 			private readonly IMapper _mapper;
 
 			public GetListQuestionQueryHandler(
-				IQuestionRespository questionRespository,
+				IQuestionRepository questionRespository,
 				IMapper mapper)
 			{
 				_questionRespository = questionRespository;

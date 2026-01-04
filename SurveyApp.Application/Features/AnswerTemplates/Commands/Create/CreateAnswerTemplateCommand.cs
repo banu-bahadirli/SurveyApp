@@ -19,7 +19,10 @@ public class CreateAnswerTemplateCommand : IRequest<CreatedAnswerTemplateRespons
 		private readonly IMapper _mapper;
 		private readonly AnswerTemplateBusinessRules _rules;
 
-		public CreateAnswerTemplateCommandHandler(IAnswerTemplateRepository answerTemplateRepository, IMapper mapper, AnswerTemplateBusinessRules rules)
+		public CreateAnswerTemplateCommandHandler(
+			IAnswerTemplateRepository answerTemplateRepository,
+			IMapper mapper,
+			AnswerTemplateBusinessRules rules)
 		{
 			_answerTemplateRepository = answerTemplateRepository;
 			_mapper = mapper;
@@ -28,21 +31,44 @@ public class CreateAnswerTemplateCommand : IRequest<CreatedAnswerTemplateRespons
 
 		public async Task<CreatedAnswerTemplateResponse> Handle(CreateAnswerTemplateCommand request, CancellationToken cancellationToken)
 		{
-			await _rules.OptionCountMustBeBetween2And4(request.OptionCount);
-			await _rules.OptionCountMustMatchOptions(request.OptionCount, request.Options.Count);
+			#region Business Rule Kontrolü
+			var optionCountMessage = await _rules.OptionCountMustBeBetween2And4(request.OptionCount);
+			if (optionCountMessage != null)
+			{
+				return new CreatedAnswerTemplateResponse
+				{
+					Success = false,
+					Message = optionCountMessage
+				};
+			}
+
+			var optionsMatchMessage = await _rules.OptionCountMustMatchOptions(request.OptionCount, request.Options.Count);
+			if (optionsMatchMessage != null)
+			{
+				return new CreatedAnswerTemplateResponse
+				{
+					Success = false,
+					Message = optionsMatchMessage
+				};
+			}
+			#endregion
 
 			var entity = new AnswerTemplate
 			{
 				Name = request.Name,
 				OptionCount = request.OptionCount,
-				Options = request.Options.Select(o => new AnswerOption { Text = o.Text, Order = o.Order }).ToList()
+				Options = request.Options
+					.Select(o => new AnswerOption { Text = o.Text, Order = o.Order })
+					.ToList()
 			};
 
 			var created = await _answerTemplateRepository.AddAsync(entity, cancellationToken);
+
 			var response = _mapper.Map<CreatedAnswerTemplateResponse>(created);
 			response.Message = AnswerTemplateMessages.AnswerTemplateCreated;
 			response.Success = true;
-			return _mapper.Map<CreatedAnswerTemplateResponse>(created);
+
+			return response;
 		}
 	}
 }

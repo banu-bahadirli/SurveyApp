@@ -16,10 +16,10 @@ namespace SurveyApp.Application.Features.Questions.Queries.GetById
 
 		public class GetByIdCorporateCustomerQueryHandler : IRequestHandler<GetByIdQuestionQuery, GetByIdQuestionResponse>
 		{
-			private readonly IQuestionRespository _questionRespository;
+			private readonly IQuestionRepository _questionRespository;
 			private readonly IMapper _mapper;
 
-			public GetByIdCorporateCustomerQueryHandler(IQuestionRespository questionRespository,IMapper mapper)
+			public GetByIdCorporateCustomerQueryHandler(IQuestionRepository questionRespository,IMapper mapper)
 			{
 				_questionRespository = questionRespository;
 				_mapper = mapper;

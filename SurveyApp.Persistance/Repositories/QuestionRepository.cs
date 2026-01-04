@@ -6,9 +6,9 @@ using SurveyApp.Persistance.Context;
 
 namespace SurveyApp.Persistance.Repositories
 {
-	public class QuestionRespository : EfRepositoryBase<Question, int, BaseDbContext>, IQuestionRespository
+	public class QuestionRepository : EfRepositoryBase<Question, int, BaseDbContext>, IQuestionRepository
 	{
-		public QuestionRespository(BaseDbContext context) : base(context)
+		public QuestionRepository(BaseDbContext context) : base(context)
 		{
 		}
 	}

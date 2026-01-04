@@ -15,12 +15,12 @@ public class CreateQuestionCommand : IRequest<CreatedQuestionResponse>
 
 	public class CreateQuestionCommandHandler : IRequestHandler<CreateQuestionCommand, CreatedQuestionResponse>
 	{
-		private readonly IQuestionRespository _questionRespository;
+		private readonly IQuestionRepository _questionRespository;
 		private readonly QuestionBusinessRules _questionBusinessRules;
 		private readonly IMapper _mapper;
 
 		public CreateQuestionCommandHandler(
-			IQuestionRespository questionRespository,
+			IQuestionRepository questionRespository,
 			IMapper mapper,
 			QuestionBusinessRules questionBusinessRules)
 		{

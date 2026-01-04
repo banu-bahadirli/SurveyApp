@@ -15,12 +15,12 @@ namespace SurveyApp.Application.Features.Questions.Commands.Update
 
 	public class UpdateQuestionCommandHandler : IRequestHandler<UpdateQuestionCommand, UpdatedQuestionResponse>
 	{
-		private readonly IQuestionRespository _questionRespository;
+		private readonly IQuestionRepository _questionRespository;
 		private readonly IMapper _mapper;
 
 
 		public UpdateQuestionCommandHandler(
-			IQuestionRespository questionRespository,
+			IQuestionRepository questionRespository,
 			IMapper mapper)
 		{
 			_questionRespository = questionRespository;

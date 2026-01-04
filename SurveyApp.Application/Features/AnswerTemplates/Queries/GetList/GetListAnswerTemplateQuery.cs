@@ -30,7 +30,6 @@ public class GetListAnswerTemplateQuery : IRequest<List<GetListAnswerTemplateRes
 				cancellationToken: cancellationToken
 			);
 
-			// AutoMapper ile mapping
 			return _mapper.Map<List<GetListAnswerTemplateResponse>>(templates);
 		}
 
