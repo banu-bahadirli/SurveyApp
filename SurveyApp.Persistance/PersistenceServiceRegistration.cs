@@ -2,8 +2,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SurveyApp.Application.Services.Repositories;
-using SurveyApp.Persistance.Context;
 using SurveyApp.Persistance.Repositories;
+using SurveyApp.Persistance.Context;
+using SurveyApp.Core.Persistance.Repositories;
 
 
 namespace SurveyApp.Persistance
@@ -29,9 +30,8 @@ namespace SurveyApp.Persistance
 			services.AddScoped<IAnswerTemplateRepository, AnswerTemplateRepository>();
 			services.AddScoped<IQuestionRespository, QuestionRespository>();
 			services.AddScoped<IUserSessionRepository, UserSessionRepository>();
+			services.AddScoped<ITransactionalRepository, EfTransactionalRepository<BaseDbContext>>();
 
-			// Business Rules
-			//services.AddScoped<UserRegisterBusinessRules>();
 
 			return services;
 		}

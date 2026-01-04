@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SurveyApp.Application.Features.Surveys.Commands.Create;
 using SurveyApp.Application.Features.Surveys.Commands.Delete;
-using SurveyApp.Application.Features.Surveys.Commands.Update;
 using SurveyApp.Application.Features.Surveys.Commands.SubmitAnswers;
+using SurveyApp.Application.Features.Surveys.Commands.Update;
 using SurveyApp.Application.Features.Surveys.Queries.GetById;
 using SurveyApp.Application.Features.Surveys.Queries.GetList;
+using SurveyApp.Application.Features.Surveys.Queries.GetSurveyQuestions;
 using SurveyApp.Application.Features.Surveys.Queries.GetUserActiveSurveys;
 using System.Security.Claims;
 
@@ -57,15 +58,10 @@ namespace SurveyApp.WebApi.Controllers
 			return Ok(result);
 		}
 
-		// -------------------------------
-		// Kullanıcıya atanmış aktif anketleri listeleme
-		// -------------------------------
+
 		[HttpGet("active")]
 		public async Task<IActionResult> GetUserActiveSurveys([FromQuery] int userId)
 		{
-			// Eğer JWT token kullanıyorsan buradaki userId kısmını token'dan alabilirsin
-			// var userId = int.Parse(User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
-
 			var query = new GetUserActiveSurveysQuery { UserId = userId };
 			var result = await Mediator.Send(query);
 			return Ok(result);
@@ -81,20 +77,15 @@ namespace SurveyApp.WebApi.Controllers
 			return Ok(result);
 		}
 
-		//[HttpGet("user-active")]
-		//public async Task<IActionResult> GetUserActiveSurveys()
-		//{
-		//	// JWT token’dan userId al
-		//	var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-		//	if (userIdClaim == null)
-		//		return Unauthorized("UserId not found in token.");
 
-		//	var userId = int.Parse(userIdClaim.Value);
+		[HttpGet("{surveyId}/questions")]
+		public async Task<IActionResult> GetSurveyQuestions([FromRoute] int surveyId)
+		{
+			var query = new GetSurveyQuestionsQuery { SurveyId = surveyId };
+			var result = await Mediator.Send(query);
+			return Ok(result);
+		}
 
-		//	var query = new GetUserActiveSurveysQuery { UserId = userId };
-		//	var result = await Mediator.Send(query);
 
-		//	return Ok(result);
-		//}
 	}
 }

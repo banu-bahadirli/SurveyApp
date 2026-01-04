@@ -4,37 +4,45 @@ using SurveyApp.Application.Features.Surveys.Constants;
 using SurveyApp.Application.Features.Surveys.Dtos;
 using SurveyApp.Application.Services.Repositories;
 using SurveyApp.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+using SurveyApp.Core.Persistance.Repositories;
+
 
 namespace SurveyApp.Application.Features.Surveys.Commands.SubmitAnswers
 {
+	public class SubmitSurveyAnswersCommand : IRequest<SubmitSurveyAnswersResponse>
+	{
+		public int UserSurveyId { get; set; }
+		public List<AnswerDto> Answers { get; set; } = new List<AnswerDto>();
+	}
 
-		public class SubmitSurveyAnswersCommand : IRequest<SubmitSurveyAnswersResponse>
+	public class SubmitSurveyAnswersCommandHandler : IRequestHandler<SubmitSurveyAnswersCommand, SubmitSurveyAnswersResponse>
+	{
+		private readonly IUserSurveyRepository _userSurveyRepository;
+		private readonly IUserSurveyAnswerRepository _userSurveyAnswerRepository;
+		private readonly ITransactionalRepository _transactionalRepository;
+
+		public SubmitSurveyAnswersCommandHandler(
+			IUserSurveyRepository userSurveyRepository,
+			IUserSurveyAnswerRepository userSurveyAnswerRepository,
+			ITransactionalRepository transactionalRepository)
 		{
-			public int UserSurveyId { get; set; }
-			public List<AnswerDto> Answers { get; set; } = new List<AnswerDto>();
+			_userSurveyRepository = userSurveyRepository;
+			_userSurveyAnswerRepository = userSurveyAnswerRepository;
+			_transactionalRepository = transactionalRepository;
 		}
 
-		public class SubmitSurveyAnswersCommandHandler : IRequestHandler<SubmitSurveyAnswersCommand, SubmitSurveyAnswersResponse>
+		public async Task<SubmitSurveyAnswersResponse> Handle(
+			SubmitSurveyAnswersCommand request,
+			CancellationToken cancellationToken)
 		{
-			private readonly IUserSurveyRepository _userSurveyRepository;
-			private readonly IUserSurveyAnswerRepository _userSurveyAnswerRepository;
+			await _transactionalRepository.BeginTransactionAsync();
 
-			public SubmitSurveyAnswersCommandHandler(
-				IUserSurveyRepository userSurveyRepository,
-				IUserSurveyAnswerRepository userSurveyAnswerRepository)
-			{
-				_userSurveyRepository = userSurveyRepository;
-				_userSurveyAnswerRepository = userSurveyAnswerRepository;
-			}
-
-			public async Task<SubmitSurveyAnswersResponse> Handle(SubmitSurveyAnswersCommand request, CancellationToken cancellationToken)
+			try
 			{
 				var userSurvey = await _userSurveyRepository.GetAsync(
 					us => us.Id == request.UserSurveyId && !us.IsCompleted,
 					include: q => q.Include(us => us.Survey),
+					enableTracking: true,
 					cancellationToken: cancellationToken
 				);
 
@@ -56,7 +64,8 @@ namespace SurveyApp.Application.Features.Surveys.Commands.SubmitAnswers
 				userSurvey.IsCompleted = true;
 				await _userSurveyRepository.UpdateAsync(userSurvey, cancellationToken);
 
-				// Response döndür
+				await _transactionalRepository.CommitTransactionAsync();
+
 				return new SubmitSurveyAnswersResponse
 				{
 					UserSurveyId = userSurvey.Id,
@@ -64,7 +73,11 @@ namespace SurveyApp.Application.Features.Surveys.Commands.SubmitAnswers
 					Message = SurveyMessages.SurveyAnswerCompleted
 				};
 			}
+			catch
+			{
+				await _transactionalRepository.RollbackTransactionAsync();
+				throw;
+			}
 		}
 	}
-
-
+}

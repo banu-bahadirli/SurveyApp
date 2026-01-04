@@ -5,6 +5,8 @@ namespace SurveyApp.Application.Features.Surveys.Queries.GetSurveyQuestions;
 public class GetSurveyQuestionsResponse
 {
 	public int QuestionId { get; set; }
-	public string QuestionText { get; set; } = null!;
+	public string QuestionText { get; set; }
+
+	public string QuestionType { get; set; }
 	public List<AnswerOptionDto> Options { get; set; } = new List<AnswerOptionDto>();
 }

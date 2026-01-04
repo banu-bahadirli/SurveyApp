@@ -16,10 +16,12 @@ public class Entity<TId> : IEntityTimestamps
 	public Entity()
 	{
 		Id = default;
+		CreatedDate = DateTime.UtcNow;
 	}
 
 	public Entity(TId id)
 	{
 		Id = id;
+		CreatedDate = DateTime.UtcNow;
 	}
 }

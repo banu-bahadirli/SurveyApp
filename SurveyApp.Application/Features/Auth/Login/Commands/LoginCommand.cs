@@ -58,6 +58,7 @@ namespace SurveyApp.Application.Features.Auth.Login.Commands
 				// 5. Response map et
 				var response = new LoginResponse
 				{
+					Id = user.Id,
 					FirstName=user.FirstName,
 					LastName=user.LastName,
 					AccessToken = accessToken,

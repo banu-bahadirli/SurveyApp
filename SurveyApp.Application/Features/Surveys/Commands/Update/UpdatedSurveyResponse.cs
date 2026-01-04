@@ -13,4 +13,6 @@ public class UpdatedSurveyResponse
 	public string Description { get; set; }
 	public DateTime StartDate { get; set; }
 	public DateTime EndDate { get; set; }
+	public string Message { get; set; } = string.Empty;
+	public bool Success { get; set; }
 }

@@ -113,13 +113,11 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-// Middleware sýrasý ÇOK ÖNEMLÝ
-//app.UseCors("SecureCorsPolicy");
 app.UseCors("AllowReact"); // UseAuthorization'dan önce
 app.UseHttpsRedirection();
 
-app.UseAuthentication(); // ?? önce
-app.UseAuthorization();  // ?? sonra
+app.UseAuthentication();
+app.UseAuthorization(); 
 
 app.MapControllers();
 app.Run();

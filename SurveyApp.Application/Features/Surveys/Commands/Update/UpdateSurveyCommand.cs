@@ -1,8 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using SurveyApp.Application.Features.Surveys.Constants;
 using SurveyApp.Application.Services.Repositories;
 using SurveyApp.Domain.Entities;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SurveyApp.Application.Features.Surveys.Commands.Update
 {
@@ -14,22 +19,27 @@ namespace SurveyApp.Application.Features.Surveys.Commands.Update
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
 		public bool IsActive { get; set; }
-
-		// Formdan gelen kullanıcı id’leri
 		public List<int> UserIds { get; set; } = new();
+		public List<int> QuestionIds { get; set; } = new(); 
 	}
 
 	public class UpdateSurveyCommandHandler
 		: IRequestHandler<UpdateSurveyCommand, UpdatedSurveyResponse>
 	{
 		private readonly ISurveyRepository _surveyRepository;
+		private readonly IUserSurveyRepository _userSurveyRepository;
+		private readonly ISurveyQuestionRepository _surveyQuestionRepository;
 		private readonly IMapper _mapper;
 
 		public UpdateSurveyCommandHandler(
 			ISurveyRepository surveyRepository,
+			IUserSurveyRepository userSurveyRepository,
+			ISurveyQuestionRepository surveyQuestionRepository,
 			IMapper mapper)
 		{
 			_surveyRepository = surveyRepository;
+			_userSurveyRepository = userSurveyRepository;
+			_surveyQuestionRepository = surveyQuestionRepository;
 			_mapper = mapper;
 		}
 
@@ -37,35 +47,71 @@ namespace SurveyApp.Application.Features.Surveys.Commands.Update
 			UpdateSurveyCommand request,
 			CancellationToken cancellationToken)
 		{
-			// Survey + UserSurveys birlikte alınmalı
 			var survey = await _surveyRepository.GetAsync(
 				s => s.Id == request.Id,
-				include: q => q.Include(s => s.UserSurveys),
+				include: q => q
+					.Include(s => s.UserSurveys)
+					.Include(s => s.SurveyQuestions),
+				enableTracking: true,
 				cancellationToken: cancellationToken
 			);
 
 			if (survey == null)
 				throw new Exception("Anket bulunamadı");
 
-			// Temel alanları map et
+			// Temel alanları güncelle
 			_mapper.Map(request, survey);
 
-			// 🔴 Eski kullanıcı ilişkilerini temizle
-			survey.UserSurveys.Clear();
-
-			// 🟢 Yeni kullanıcı ilişkilerini ekle
-			foreach (var userId in request.UserIds)
+			//Eski UserSurvey kayıtlarını kalıcı sil
+			var oldUserSurveys = survey.UserSurveys.ToList();
+			if (oldUserSurveys.Any())
 			{
-				survey.UserSurveys.Add(new UserSurvey
-				{
-					SurveyId = survey.Id,
-					UserId = userId
-				});
+				foreach (var us in oldUserSurveys)
+					await _userSurveyRepository.DeleteAsync(us, true);
 			}
 
+			//Yeni UserSurvey kayıtlarını ekle
+			foreach (var userId in request.UserIds)
+			{
+				var userSurvey = new UserSurvey
+				{
+					SurveyId = survey.Id,
+					UserId = userId,
+					IsCompleted = false,
+					CreatedDate = DateTime.UtcNow
+				};
+				await _userSurveyRepository.AddAsync(userSurvey);
+			}
+
+			//Eski SurveyQuestion kayıtlarını sil
+			var oldSurveyQuestions = survey.SurveyQuestions.ToList();
+			if (oldSurveyQuestions.Any())
+			{
+				foreach (var sq in oldSurveyQuestions)
+					await _surveyQuestionRepository.DeleteAsync(sq, true);
+			}
+
+			// Yeni SurveyQuestion kayıtlarını ekle
+			foreach (var questionId in request.QuestionIds)
+			{
+				var surveyQuestion = new SurveyQuestion
+				{
+					SurveyId = survey.Id,
+					QuestionId = questionId,
+					CreatedDate = DateTime.UtcNow
+				};
+				await _surveyQuestionRepository.AddAsync(surveyQuestion);
+			}
+
+			// Survey entity’sini güncelle
 			await _surveyRepository.UpdateAsync(survey, cancellationToken);
 
-			return _mapper.Map<UpdatedSurveyResponse>(survey);
+			// Response
+			var response = _mapper.Map<UpdatedSurveyResponse>(survey);
+			response.Success = true;
+			response.Message = SurveyMessages.SurveyUpdated;
+
+			return response;
 		}
 	}
 }

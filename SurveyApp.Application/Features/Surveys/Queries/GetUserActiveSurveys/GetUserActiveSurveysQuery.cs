@@ -25,12 +25,12 @@ namespace SurveyApp.Application.Features.Surveys.Queries.GetUserActiveSurveys
 			}
 
 			public async Task<List<GetUserActiveSurveyResponse>> Handle(
-				GetUserActiveSurveysQuery request,
-				CancellationToken cancellationToken)
+		GetUserActiveSurveysQuery request,
+		CancellationToken cancellationToken)
 			{
-				var now = DateTime.UtcNow;
+				var turkiyeTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Turkey Standard Time");
+				var today = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, turkiyeTimeZone).Date;
 
-				// Kullanıcıya atanmış ve aktif olan anketleri çek
 				var userSurveys = await _userSurveyRepository.GetListNoPaginationAsync(
 					predicate: us =>
 						us.UserId == request.UserId &&
@@ -38,17 +38,17 @@ namespace SurveyApp.Application.Features.Surveys.Queries.GetUserActiveSurveys
 						us.DeletedDate == null &&
 						us.Survey != null &&
 						us.Survey.IsActive &&
-						us.Survey.StartDate <= now &&
-						us.Survey.EndDate >= now,
+						us.Survey.StartDate.Date <= today &&
+						us.Survey.EndDate.Date >= today, // Saat kısmını tamamen görmezden gel
 					include: q => q.Include(us => us.Survey),
 					enableTracking: false,
 					cancellationToken: cancellationToken
 				);
 
-				// Mapper ile response DTO’ya dönüştür
 				var response = _mapper.Map<List<GetUserActiveSurveyResponse>>(userSurveys);
 				return response;
 			}
+
 		}
 	}
 }

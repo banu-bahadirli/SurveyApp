@@ -17,8 +17,7 @@ public class GetSurveyQuestionsQuery : IRequest<List<GetSurveyQuestionsResponse>
 {
 	public int SurveyId { get; set; }
 
-
-public class GetSurveyQuestionsQueryHandler : IRequestHandler<GetSurveyQuestionsQuery, List<GetSurveyQuestionsResponse>>
+	public class GetSurveyQuestionsQueryHandler : IRequestHandler<GetSurveyQuestionsQuery, List<GetSurveyQuestionsResponse>>
 	{
 		private readonly ISurveyQuestionRepository _surveyQuestionRepository;
 		private readonly IMapper _mapper;
@@ -33,7 +32,6 @@ public class GetSurveyQuestionsQueryHandler : IRequestHandler<GetSurveyQuestions
 
 		public async Task<List<GetSurveyQuestionsResponse>> Handle(GetSurveyQuestionsQuery request, CancellationToken cancellationToken)
 		{
-			// SurveyQuestion üzerinden anketin sorularını çekiyoruz
 			var surveyQuestions = await _surveyQuestionRepository.GetListNoPaginationAsync(
 				predicate: sq => sq.SurveyId == request.SurveyId,
 				include: q => q
@@ -44,18 +42,19 @@ public class GetSurveyQuestionsQueryHandler : IRequestHandler<GetSurveyQuestions
 				cancellationToken: cancellationToken
 			);
 
-			// DTO mapping
 			var response = surveyQuestions.Select(sq => new GetSurveyQuestionsResponse
 			{
 				QuestionId = sq.QuestionId,
 				QuestionText = sq.Question.Text,
-				Options = sq.Question.AnswerTemplate.Options
+				QuestionType = "MultipleChoice",
+				Options = sq.Question.AnswerTemplate?.Options?
 							.OrderBy(o => o.Order)
 							.Select(o => _mapper.Map<AnswerOptionDto>(o))
-							.ToList()
+							.ToList() ?? new List<AnswerOptionDto>()
 			}).ToList();
 
 			return response;
 		}
 	}
+
 }

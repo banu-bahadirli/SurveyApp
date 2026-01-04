@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using MediatR;
-using SurveyApp.Application.Features.AnswerTemplates.Constants;
 using SurveyApp.Application.Features.Users.Constants;
 using SurveyApp.Application.Features.Users.Rules;
 using SurveyApp.Application.Services.Repositories;
@@ -8,10 +7,9 @@ using SurveyApp.Core.Security.Constants;
 using SurveyApp.Core.Security.Entities;
 using SurveyApp.Core.Security.Hashing;
 
-
 namespace SurveyApp.Application.Features.Users.Commands.Create
 {
-	public class  CreateUserCommand : IRequest<CreatedUserResponse>
+	public class CreateUserCommand : IRequest<CreatedUserResponse>
 	{
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
@@ -45,7 +43,7 @@ namespace SurveyApp.Application.Features.Users.Commands.Create
 				// Email uniqueness kontrolü
 				await _businessRules.UserEmailCannotBeDuplicatedWhenInserted(command.Email);
 
-				// Password Hash
+				// Password hash oluştur
 				HashingHelper.CreatePasswordHash(command.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
 				// User entity oluştur
@@ -56,8 +54,8 @@ namespace SurveyApp.Application.Features.Users.Commands.Create
 				// User'u ekle
 				var createdUser = await _userRepository.AddAsync(user);
 
-				// 🔹 Default "User" rolünü DB'de kontrol et, yoksa ekle
-				var userClaim = await _operationClaimRepository.GetAsync(c => c.Name == "User");
+				// Default "User" rolünü DB'de kontrol et, yoksa ekle
+				var userClaim = await _operationClaimRepository.GetAsync(c => c.Name == GeneralOperationClaims.User);
 				if (userClaim == null)
 				{
 					userClaim = new OperationClaim
@@ -68,9 +66,14 @@ namespace SurveyApp.Application.Features.Users.Commands.Create
 					userClaim = await _operationClaimRepository.AddAsync(userClaim);
 				}
 
+				// Kullanıcıya User rolünü bağla
+				await _userOperationClaimRepository.AddAsync(new UserOperationClaim(createdUser.Id, userClaim.Id));
+
+				// Response oluştur
 				var response = _mapper.Map<CreatedUserResponse>(createdUser);
 				response.Message = UserMessages.UserCreated;
 				response.Success = true;
+
 				return response;
 			}
 		}
