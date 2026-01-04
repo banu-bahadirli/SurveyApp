@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
+using SurveyApp.Application.Features.AnswerTemplates.Commands.Create;
 using SurveyApp.Application.Features.Surveys.Constants;
 using SurveyApp.Application.Features.Surveys.Rules;
 using SurveyApp.Application.Services.Repositories;
 using SurveyApp.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -45,16 +47,24 @@ namespace SurveyApp.Application.Features.Surveys.Commands.Create
 
 			public async Task<CreatedSurveyResponse> Handle(CreateSurveyCommand request, CancellationToken cancellationToken)
 			{
-				// Başlık benzersizliği kontrolü
-				await _businessRules.SurveyTitleCannotBeDuplicatedWhenInserted(request.Title);
+				#region Başlık benzersizliği kontrolü
+				var titleMessage = await _businessRules.SurveyTitleCannotBeDuplicatedWhenInserted(request.Title);		
+				if (titleMessage != null)
+				{
+					return new CreatedSurveyResponse
+					{
+						Success = false,
+						Message = titleMessage
+					};
+				}
+				#endregion
 
-				// Survey entity oluştur
+
 				var survey = _mapper.Map<Survey>(request);
 				survey.CreatedDate = DateTime.UtcNow;
 
 				var createdSurvey = await _surveyRepository.AddAsync(survey);
 
-				// UserSurvey kayıtlarını ekle
 				if (request.UserIds != null && request.UserIds.Count > 0)
 				{
 					foreach (var userId in request.UserIds)
@@ -70,7 +80,6 @@ namespace SurveyApp.Application.Features.Surveys.Commands.Create
 					}
 				}
 
-				// SurveyQuestion kayıtlarını ekle
 				if (request.QuestionIds != null && request.QuestionIds.Count > 0)
 				{
 					foreach (var questionId in request.QuestionIds)
@@ -85,11 +94,9 @@ namespace SurveyApp.Application.Features.Surveys.Commands.Create
 					}
 				}
 
-				// Response oluştur
 				var response = _mapper.Map<CreatedSurveyResponse>(createdSurvey);
 				response.Success = true;
 				response.Message = SurveyMessages.SurveyCreated;
-
 				return response;
 			}
 		}

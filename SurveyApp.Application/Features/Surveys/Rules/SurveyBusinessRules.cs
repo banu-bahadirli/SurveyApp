@@ -1,4 +1,5 @@
-﻿using SurveyApp.Application.Features.Surveys.Constants;
+﻿using SurveyApp.Application.Features.AnswerTemplates.Constants;
+using SurveyApp.Application.Features.Surveys.Constants;
 using SurveyApp.Application.Services.Repositories;
 using SurveyApp.Core.CrossCuttingConcerns.Exceptions.Types;
 using SurveyApp.Domain.Entities;
@@ -19,14 +20,18 @@ public class SurveyBusinessRules
 		_surveyRepository = surveyRepository;
 	}
 
-	public async Task SurveyTitleCannotBeDuplicatedWhenInserted(string title)
+	#region Aynı Başlıklı anket kayıtlı mı
+	public async Task<string?> SurveyTitleCannotBeDuplicatedWhenInserted(string title)
 	{
 		Survey? result = await _surveyRepository.GetAsync(predicate: b => b.Title.ToLower() == title.ToLower());
 
 		if (result != null)
 		{
-			throw new BusinessException(SurveyMessages.SurveyTitleExists);
+			return SurveyMessages.SurveyTitleExists;
 
 		}
+		return null;
 	}
+	#endregion
+
 }

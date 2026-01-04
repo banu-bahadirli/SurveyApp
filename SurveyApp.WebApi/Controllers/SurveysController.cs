@@ -62,6 +62,7 @@ public class SurveysController : BaseController
 
 	// Kullanıcı endpointleri, Admin’e özel değil
 	[HttpGet("active")]
+	[Authorize(Roles = "User")]
 	public async Task<IActionResult> GetUserActiveSurveys([FromQuery] int userId)
 	{
 		var query = new GetUserActiveSurveysQuery { UserId = userId };
@@ -70,6 +71,7 @@ public class SurveysController : BaseController
 	}
 
 	[HttpPost("submit-answers")]
+	[Authorize(Roles = "User")]
 	public async Task<IActionResult> SubmitSurveyAnswers([FromBody] SubmitSurveyAnswersCommand command)
 	{
 		var result = await Mediator.Send(command);
@@ -77,6 +79,7 @@ public class SurveysController : BaseController
 	}
 
 	[HttpGet("{surveyId}/questions")]
+	[Authorize(Roles = "User")]
 	public async Task<IActionResult> GetSurveyQuestions([FromRoute] int surveyId)
 	{
 		var query = new GetSurveyQuestionsQuery { SurveyId = surveyId };

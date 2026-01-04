@@ -57,12 +57,16 @@ namespace SurveyApp.Application.Features.Surveys.Commands.Update
 			);
 
 			if (survey == null)
-				throw new Exception("Anket bulunamadı");
-
-			// Temel alanları güncelle
+			{
+				return new UpdatedSurveyResponse
+				{
+					Success = false,
+					Message = SurveyMessages.SurveyNotFound
+				};
+			}
+			
 			_mapper.Map(request, survey);
 
-			//Eski UserSurvey kayıtlarını kalıcı sil
 			var oldUserSurveys = survey.UserSurveys.ToList();
 			if (oldUserSurveys.Any())
 			{
@@ -70,7 +74,6 @@ namespace SurveyApp.Application.Features.Surveys.Commands.Update
 					await _userSurveyRepository.DeleteAsync(us, true);
 			}
 
-			//Yeni UserSurvey kayıtlarını ekle
 			foreach (var userId in request.UserIds)
 			{
 				var userSurvey = new UserSurvey
@@ -83,7 +86,6 @@ namespace SurveyApp.Application.Features.Surveys.Commands.Update
 				await _userSurveyRepository.AddAsync(userSurvey);
 			}
 
-			//Eski SurveyQuestion kayıtlarını sil
 			var oldSurveyQuestions = survey.SurveyQuestions.ToList();
 			if (oldSurveyQuestions.Any())
 			{
@@ -91,7 +93,6 @@ namespace SurveyApp.Application.Features.Surveys.Commands.Update
 					await _surveyQuestionRepository.DeleteAsync(sq, true);
 			}
 
-			// Yeni SurveyQuestion kayıtlarını ekle
 			foreach (var questionId in request.QuestionIds)
 			{
 				var surveyQuestion = new SurveyQuestion
@@ -103,14 +104,11 @@ namespace SurveyApp.Application.Features.Surveys.Commands.Update
 				await _surveyQuestionRepository.AddAsync(surveyQuestion);
 			}
 
-			// Survey entity’sini güncelle
 			await _surveyRepository.UpdateAsync(survey, cancellationToken);
 
-			// Response
 			var response = _mapper.Map<UpdatedSurveyResponse>(survey);
 			response.Success = true;
 			response.Message = SurveyMessages.SurveyUpdated;
-
 			return response;
 		}
 	}

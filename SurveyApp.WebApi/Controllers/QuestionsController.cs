@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SurveyApp.Application.Features.Questions.Commands.Create;
 using SurveyApp.Application.Features.Questions.Commands.Delete;
 using SurveyApp.Application.Features.Questions.Commands.Update;
@@ -10,6 +11,7 @@ namespace SurveyApp.WebApi.Controllers
 
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize(Roles = "Admin")]
 	public class QuestionsController : BaseController
 	{
 
