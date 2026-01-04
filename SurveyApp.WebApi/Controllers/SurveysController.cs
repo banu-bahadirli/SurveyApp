@@ -86,4 +86,13 @@ public class SurveysController : BaseController
 		var result = await Mediator.Send(query);
 		return Ok(result);
 	}
+
+	[HttpGet("{surveyId}/report")]
+	public async Task<IActionResult> GetSurveyReport(int surveyId)
+	{
+		var report = await Mediator.Send(new SurveyReportQuery { SurveyId = surveyId });
+		return Ok(report);
+	}
+
+
 }

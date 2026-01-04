@@ -10,8 +10,8 @@ namespace SurveyApp.Application.Features.Questions.Commands.Update
 {
 	public class UpdateQuestionCommand : IRequest<UpdatedQuestionResponse>
 	{
-		public int Id { get; set; }  // URL'den gelen survey id
-		public string Text { get; set; } = string.Empty;        // Soru metni
+		public int Id { get; set; } 
+		public string Text { get; set; } = string.Empty;      
 		public int AnswerTemplateId { get; set; }
 	}
 

@@ -26,7 +26,7 @@ namespace SurveyApp.Persistence.EntityConfigurations
 
 			// Question ile ilişki
 			builder.HasOne(sq => sq.Question)
-				   .WithMany() // Question entity’de collection yok
+				   .WithMany(q=>q.SurveyQuestions) 
 				   .HasForeignKey(sq => sq.QuestionId)
 				   .OnDelete(DeleteBehavior.Restrict);
 		}

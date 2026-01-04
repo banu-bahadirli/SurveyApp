@@ -27,8 +27,6 @@ namespace SurveyApp.Persistance.Context
 			// Tüm configuration dosyalarını otomatik uygula
 			modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-			// Bu noktada ek ilişkiler veya override gerekirse buraya yazılır
-			// Ama senin config dosyaların zaten tüm ilişkileri tanımlıyor.
 		}
 	}
 }

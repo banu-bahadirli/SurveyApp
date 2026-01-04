@@ -41,7 +41,8 @@ namespace SurveyApp.Persistance.Migrations
 
                     b.Property<string>("Text")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -50,7 +51,7 @@ namespace SurveyApp.Persistance.Migrations
 
                     b.HasIndex("AnswerTemplateId");
 
-                    b.ToTable("Questions");
+                    b.ToTable("Questions", (string)null);
                 });
 
             modelBuilder.Entity("SurveyApp.Core.Security.Entities.OperationClaim", b =>
@@ -206,7 +207,8 @@ namespace SurveyApp.Persistance.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<int>("OptionCount")
                         .HasColumnType("int");
@@ -216,7 +218,7 @@ namespace SurveyApp.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AnswerTemplates");
+                    b.ToTable("AnswerTemplates", (string)null);
                 });
 
             modelBuilder.Entity("SurveyApp.Domain.Entities.Survey", b =>
@@ -257,48 +259,6 @@ namespace SurveyApp.Persistance.Migrations
                     b.ToTable("Surveys", (string)null);
                 });
 
-            modelBuilder.Entity("SurveyApp.Domain.Entities.SurveyAnswer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AnswerOptionId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SurveyId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AnswerOptionId");
-
-                    b.HasIndex("QuestionId");
-
-                    b.HasIndex("SurveyId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("SurveyAnswers", (string)null);
-                });
-
             modelBuilder.Entity("SurveyApp.Domain.Entities.SurveyQuestion", b =>
                 {
                     b.Property<int>("Id")
@@ -316,9 +276,6 @@ namespace SurveyApp.Persistance.Migrations
                     b.Property<int>("QuestionId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("QuestionId1")
-                        .HasColumnType("int");
-
                     b.Property<int>("SurveyId")
                         .HasColumnType("int");
 
@@ -328,8 +285,6 @@ namespace SurveyApp.Persistance.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("QuestionId");
-
-                    b.HasIndex("QuestionId1");
 
                     b.HasIndex("SurveyId");
 
@@ -413,7 +368,7 @@ namespace SurveyApp.Persistance.Migrations
                     b.HasOne("SurveyApp.Domain.Entities.AnswerTemplate", "AnswerTemplate")
                         .WithMany()
                         .HasForeignKey("AnswerTemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("AnswerTemplate");
@@ -449,52 +404,13 @@ namespace SurveyApp.Persistance.Migrations
                     b.Navigation("AnswerTemplate");
                 });
 
-            modelBuilder.Entity("SurveyApp.Domain.Entities.SurveyAnswer", b =>
-                {
-                    b.HasOne("SurveyApp.Domain.Entities.AnswerOption", "AnswerOption")
-                        .WithMany()
-                        .HasForeignKey("AnswerOptionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Question", "Question")
-                        .WithMany()
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SurveyApp.Domain.Entities.Survey", "Survey")
-                        .WithMany()
-                        .HasForeignKey("SurveyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SurveyApp.Core.Security.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("AnswerOption");
-
-                    b.Navigation("Question");
-
-                    b.Navigation("Survey");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("SurveyApp.Domain.Entities.SurveyQuestion", b =>
                 {
                     b.HasOne("Question", "Question")
-                        .WithMany()
+                        .WithMany("SurveyQuestions")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("Question", null)
-                        .WithMany("SurveyQuestions")
-                        .HasForeignKey("QuestionId1");
 
                     b.HasOne("SurveyApp.Domain.Entities.Survey", "Survey")
                         .WithMany("SurveyQuestions")

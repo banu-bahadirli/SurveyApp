@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SurveyApp.Persistance.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,7 @@ namespace SurveyApp.Persistance.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     OptionCount = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -115,7 +115,7 @@ namespace SurveyApp.Persistance.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Text = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     AnswerTemplateId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -129,7 +129,7 @@ namespace SurveyApp.Persistance.Migrations
                         column: x => x.AnswerTemplateId,
                         principalTable: "AnswerTemplates",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -192,49 +192,6 @@ namespace SurveyApp.Persistance.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SurveyAnswers",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    SurveyId = table.Column<int>(type: "int", nullable: false),
-                    QuestionId = table.Column<int>(type: "int", nullable: false),
-                    AnswerOptionId = table.Column<int>(type: "int", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SurveyAnswers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SurveyAnswers_AnswerOptions_AnswerOptionId",
-                        column: x => x.AnswerOptionId,
-                        principalTable: "AnswerOptions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_SurveyAnswers_Questions_QuestionId",
-                        column: x => x.QuestionId,
-                        principalTable: "Questions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SurveyAnswers_Surveys_SurveyId",
-                        column: x => x.SurveyId,
-                        principalTable: "Surveys",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SurveyAnswers_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "SurveyQuestions",
                 columns: table => new
                 {
@@ -242,7 +199,6 @@ namespace SurveyApp.Persistance.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SurveyId = table.Column<int>(type: "int", nullable: false),
                     QuestionId = table.Column<int>(type: "int", nullable: false),
-                    QuestionId1 = table.Column<int>(type: "int", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -256,11 +212,6 @@ namespace SurveyApp.Persistance.Migrations
                         principalTable: "Questions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_SurveyQuestions_Questions_QuestionId1",
-                        column: x => x.QuestionId1,
-                        principalTable: "Questions",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_SurveyQuestions_Surveys_SurveyId",
                         column: x => x.SurveyId,
@@ -316,34 +267,9 @@ namespace SurveyApp.Persistance.Migrations
                 column: "AnswerTemplateId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SurveyAnswers_AnswerOptionId",
-                table: "SurveyAnswers",
-                column: "AnswerOptionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SurveyAnswers_QuestionId",
-                table: "SurveyAnswers",
-                column: "QuestionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SurveyAnswers_SurveyId",
-                table: "SurveyAnswers",
-                column: "SurveyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SurveyAnswers_UserId",
-                table: "SurveyAnswers",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_SurveyQuestions_QuestionId",
                 table: "SurveyQuestions",
                 column: "QuestionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SurveyQuestions_QuestionId1",
-                table: "SurveyQuestions",
-                column: "QuestionId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SurveyQuestions_SurveyId",
@@ -389,9 +315,6 @@ namespace SurveyApp.Persistance.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "SurveyAnswers");
-
             migrationBuilder.DropTable(
                 name: "SurveyQuestions");
 
