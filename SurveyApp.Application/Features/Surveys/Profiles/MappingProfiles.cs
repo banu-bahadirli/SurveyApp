@@ -4,7 +4,9 @@ using SurveyApp.Application.Features.Surveys.Commands.Delete;
 using SurveyApp.Application.Features.Surveys.Commands.Update;
 using SurveyApp.Application.Features.Surveys.Queries.GetById;
 using SurveyApp.Application.Features.Surveys.Queries.GetList;
+using SurveyApp.Application.Features.Surveys.Queries.GetNotCompletedSurveyUser;
 using SurveyApp.Application.Features.Surveys.Queries.GetUserActiveSurveys;
+using SurveyApp.Application.Features.Surveys.Queries.GetUserSurveyAnswers;
 using SurveyApp.Core.Persistance.Repositories;
 using SurveyApp.Domain.Entities;
 
@@ -45,6 +47,22 @@ namespace SurveyApp.Application.Features.Surveys.Profiles
 				.ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User!.FirstName))
 				.ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User!.LastName))
 				.ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User!.Email));
+
+			CreateMap<UserSurvey, GetNotCompletedSurveyUserResponse>()
+				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.User!.Id))
+				.ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User!.FirstName))
+				.ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User!.LastName))
+				.ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User!.Email));
+
+			CreateMap<UserSurveyAnswer, GetUserSurveyAnswerResponse>()
+			.ForMember(dest => dest.QuestionId, opt => opt.MapFrom(src => src.QuestionId))
+			.ForMember(dest => dest.QuestionText, opt => opt.MapFrom(src => src.Question != null ? src.Question.Text : string.Empty))
+			.ForMember(dest => dest.AnswerText, opt => opt.MapFrom(src => "")) // Eğer metin cevabı olacaksa buraya bağlanabilir
+			.ForMember(dest => dest.AnswerOptionId, opt => opt.MapFrom(src => (int?)src.SelectedOptionId))
+			.ForMember(dest => dest.AnswerOptionText, opt => opt.MapFrom(src => src.SelectedOption != null ? src.SelectedOption.Text : null));
+
+
+
 
 		}
 	}

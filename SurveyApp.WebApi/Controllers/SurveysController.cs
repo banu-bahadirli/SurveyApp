@@ -8,8 +8,10 @@ using SurveyApp.Application.Features.Surveys.Commands.Update;
 using SurveyApp.Application.Features.Surveys.Queries.GetById;
 using SurveyApp.Application.Features.Surveys.Queries.GetCompletedSurveyUser;
 using SurveyApp.Application.Features.Surveys.Queries.GetList;
+using SurveyApp.Application.Features.Surveys.Queries.GetNotCompletedSurveyUser;
 using SurveyApp.Application.Features.Surveys.Queries.GetSurveyQuestions;
 using SurveyApp.Application.Features.Surveys.Queries.GetUserActiveSurveys;
+using SurveyApp.Application.Features.Surveys.Queries.GetUserSurveyAnswers;
 using SurveyApp.WebApi.Controllers;
 
 [Route("api/[controller]")]
@@ -66,6 +68,23 @@ public class SurveysController : BaseController
 		var users = await Mediator.Send(new GetCompletedSurveyUserQuery { SurveyId = surveyId });
 		return Ok(users);
 	}
+
+	[HttpGet("{surveyId}/not-completed-users")]
+	public async Task<IActionResult> GetNotCompletedSurveyUsers(int surveyId)
+	{
+		var users = await Mediator.Send(new GetNotCompletedSurveyUserQuery { SurveyId = surveyId });
+		return Ok(users);
+	}
+
+	[HttpGet("{surveyId}/user/{userId}/answers")]
+	public async Task<IActionResult> GetUserSurveyAnswers(int surveyId, int userId)
+	{
+		var answers = await Mediator.Send(new GetUserSurveyAnswersQuery { SurveyId = surveyId, UserId = userId });
+		return Ok(answers);
+	}
+
+
+
 
 	[HttpGet("active")]
 	[Authorize(Roles = "User")]
