@@ -1,7 +1,6 @@
 ﻿using SurveyApp.Application.Features.AnswerTemplates.Constants;
 using SurveyApp.Application.Features.Surveys.Constants;
 using SurveyApp.Application.Services.Repositories;
-using SurveyApp.Core.CrossCuttingConcerns.Exceptions.Types;
 using SurveyApp.Domain.Entities;
 using System;
 using System.Collections.Generic;

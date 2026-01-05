@@ -1,6 +1,7 @@
-﻿using SurveyApp.Application.Features.Users.Constants;
+﻿using SurveyApp.Application.Features.Surveys.Constants;
+using SurveyApp.Application.Features.Users.Constants;
 using SurveyApp.Application.Services.Repositories;
-using SurveyApp.Core.CrossCuttingConcerns.Exceptions.Types;
+using SurveyApp.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +20,18 @@ namespace SurveyApp.Application.Features.Users.Rules
 			_userRepository = userRepository;
 		}
 
-		public async Task UserEmailCannotBeDuplicatedWhenInserted(string email)
+		#region Aynı Email kayıtlı mı
+		public async Task<string?> UserEmailCannotBeDuplicatedWhenInserted(string email)
 		{
 			var result = await _userRepository.AnyAsync(c => c.Email == email);
+
 			if (result)
-				throw new BusinessException(UserMessages.UserEmailAlreadyExists);
+			{
+				return UserMessages.UserEmailAlreadyExists;
+
+			}
+			return null;
 		}
+		#endregion
 	}
 }

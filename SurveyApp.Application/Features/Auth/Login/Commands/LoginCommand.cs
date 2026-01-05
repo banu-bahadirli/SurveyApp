@@ -62,6 +62,7 @@ namespace SurveyApp.Application.Features.Auth.Login.Commands
 					FirstName=user.FirstName,
 					LastName=user.LastName,
 					AccessToken = accessToken,
+					Roles = operationClaims.Select(p=>p.Name).ToList(),
 					Success = true,
 					Message = LoginMessages.SuccessLogin
 				};

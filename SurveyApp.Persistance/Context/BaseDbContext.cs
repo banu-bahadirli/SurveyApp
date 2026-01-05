@@ -24,7 +24,6 @@ namespace SurveyApp.Persistance.Context
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			// Tüm configuration dosyalarını otomatik uygula
 			modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
 		}

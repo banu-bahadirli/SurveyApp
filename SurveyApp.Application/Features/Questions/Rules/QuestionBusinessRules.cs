@@ -2,7 +2,6 @@
 using SurveyApp.Application.Features.Questions.Constants;
 using SurveyApp.Application.Features.Surveys.Constants;
 using SurveyApp.Application.Services.Repositories;
-using SurveyApp.Core.CrossCuttingConcerns.Exceptions.Types;
 using SurveyApp.Domain.Entities;
 
 namespace SurveyApp.Application.Features.Questions.Rules

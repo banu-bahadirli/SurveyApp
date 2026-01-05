@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using SurveyApp.Application.Features.Surveys.Commands.Create;
 using SurveyApp.Application.Features.Users.Constants;
 using SurveyApp.Application.Features.Users.Rules;
 using SurveyApp.Application.Services.Repositories;
@@ -40,18 +41,28 @@ namespace SurveyApp.Application.Features.Users.Commands.Create
 
 			public async Task<CreatedUserResponse> Handle(CreateUserCommand command, CancellationToken cancellationToken)
 			{
-				// Email uniqueness kontrolü
-				await _businessRules.UserEmailCannotBeDuplicatedWhenInserted(command.Email);
+				#region Email uniqueness kontrolü
+				var bussinessMessage = await _businessRules.UserEmailCannotBeDuplicatedWhenInserted(command.Email);
+				if (bussinessMessage != null)
+				{
+					return new CreatedUserResponse
+					{
+						Success = false,
+						Message = bussinessMessage
+					};
+				}
+				#endregion
 
-				// Password hash oluştur
+				#region  Password hash oluştur
+
 				HashingHelper.CreatePasswordHash(command.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-				// User entity oluştur
+				#endregion
+
 				var user = _mapper.Map<User>(command);
 				user.PasswordHash = passwordHash;
 				user.PasswordSalt = passwordSalt;
 
-				// User'u ekle
 				var createdUser = await _userRepository.AddAsync(user);
 
 				// Default "User" rolünü DB'de kontrol et, yoksa ekle
