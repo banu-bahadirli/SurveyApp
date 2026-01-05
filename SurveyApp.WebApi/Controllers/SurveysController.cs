@@ -6,6 +6,7 @@ using SurveyApp.Application.Features.Surveys.Commands.Delete;
 using SurveyApp.Application.Features.Surveys.Commands.SubmitAnswers;
 using SurveyApp.Application.Features.Surveys.Commands.Update;
 using SurveyApp.Application.Features.Surveys.Queries.GetById;
+using SurveyApp.Application.Features.Surveys.Queries.GetCompletedSurveyUser;
 using SurveyApp.Application.Features.Surveys.Queries.GetList;
 using SurveyApp.Application.Features.Surveys.Queries.GetSurveyQuestions;
 using SurveyApp.Application.Features.Surveys.Queries.GetUserActiveSurveys;
@@ -59,8 +60,13 @@ public class SurveysController : BaseController
 		return Ok(result);
 	}
 
+	[HttpGet("{surveyId}/completed-users")]
+	public async Task<IActionResult> GetCompletedSurveyUsers(int surveyId)
+	{
+		var users = await Mediator.Send(new GetCompletedSurveyUserQuery { SurveyId = surveyId });
+		return Ok(users);
+	}
 
-	// Kullanıcı endpointleri, Admin’e özel değil
 	[HttpGet("active")]
 	[Authorize(Roles = "User")]
 	public async Task<IActionResult> GetUserActiveSurveys([FromQuery] int userId)
@@ -86,13 +92,5 @@ public class SurveysController : BaseController
 		var result = await Mediator.Send(query);
 		return Ok(result);
 	}
-
-	[HttpGet("{surveyId}/report")]
-	public async Task<IActionResult> GetSurveyReport(int surveyId)
-	{
-		var report = await Mediator.Send(new SurveyReportQuery { SurveyId = surveyId });
-		return Ok(report);
-	}
-
 
 }

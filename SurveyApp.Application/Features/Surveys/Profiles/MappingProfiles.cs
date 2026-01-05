@@ -39,6 +39,13 @@ namespace SurveyApp.Application.Features.Surveys.Profiles
 				.ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Survey!.Description))
 				.ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.Survey!.StartDate))
 				.ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.Survey!.EndDate));
+
+			CreateMap<UserSurvey, GetCompletedSurveyUserResponse>()
+				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.User!.Id))
+				.ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User!.FirstName))
+				.ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User!.LastName))
+				.ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User!.Email));
+
 		}
 	}
 }
