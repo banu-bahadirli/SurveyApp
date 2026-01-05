@@ -1,8 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentValidation;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
+using SurveyApp.Application.Behaviors;
 using SurveyApp.Application.Features.AnswerTemplates.Rules;
 using SurveyApp.Application.Features.Questions.Rules;
 using SurveyApp.Application.Features.Surveys.Rules;
 using SurveyApp.Application.Features.Users.Rules;
+using SurveyApp.Application.Validation;
 using System.Reflection;
 
 
@@ -22,6 +26,9 @@ public static class ApplicationServiceRegistration
 		services.AddScoped<UserBusinessRules>();
 		services.AddScoped<AnswerTemplateBusinessRules>();
 		services.AddScoped<QuestionBusinessRules>();
+		services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+		services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
+
 
 		return services;
 	}

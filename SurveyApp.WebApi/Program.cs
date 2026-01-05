@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen(c =>
 		Version = "v1"
 	});
 
-	// ?? JWT Tanýmý
+	// JWT Tanýmý
 	c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
 	{
 		Name = "Authorization",
@@ -33,7 +33,6 @@ builder.Services.AddSwaggerGen(c =>
 		Description = "Bearer {token}"
 	});
 
-	// ?? JWT Zorunluluðu
 	c.AddSecurityRequirement(new OpenApiSecurityRequirement
 	{
 		{
@@ -113,7 +112,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseCors("AllowReact"); // UseAuthorization'dan önce
+app.UseCors("AllowReact"); 
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
