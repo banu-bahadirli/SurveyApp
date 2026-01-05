@@ -1,21 +1,22 @@
-﻿using SurveyApp.Application.Features.AnswerTemplates.Constants;
-using SurveyApp.Application.Features.Questions.Constants;
-using SurveyApp.Application.Features.Surveys.Constants;
+﻿using SurveyApp.Application.Features.Questions.Constants;
 using SurveyApp.Application.Services.Repositories;
-using SurveyApp.Domain.Entities;
 
 namespace SurveyApp.Application.Features.Questions.Rules
 {
 	public class QuestionBusinessRules
 	{
 		private readonly IAnswerTemplateRepository _answerTemplateRepository;
+		private readonly ISurveyQuestionRepository _surveyQuestionRepository;
 
-		public QuestionBusinessRules(IAnswerTemplateRepository answerTemplateRepository)
+		public QuestionBusinessRules(
+			IAnswerTemplateRepository answerTemplateRepository,
+			ISurveyQuestionRepository surveyQuestionRepository)
 		{
 			_answerTemplateRepository = answerTemplateRepository;
+			_surveyQuestionRepository = surveyQuestionRepository;
 		}
 
-		#region  Şablon var mı ve cevap tipi dolu mu?
+		#region Şablon var mı ve cevap tipi dolu mu?
 		public async Task<string?> AnswerTemplateMustExist(int answerTemplateId)
 		{
 			var template = await _answerTemplateRepository.GetAsync(
@@ -25,7 +26,21 @@ namespace SurveyApp.Application.Features.Questions.Rules
 			if (template == null)
 				return QuestionMessages.SelectedTemplateNotFound;
 
-			return null; 
+			return null;
+		}
+		#endregion
+
+		#region Soru ankette kullanılıyorsa silinemez
+		public async Task<string?> QuestionCannotBeDeletedIfUsedInSurvey(int questionId)
+		{
+			var isUsed = await _surveyQuestionRepository.AnyAsync(
+				sq => sq.QuestionId == questionId
+			);
+
+			if (isUsed)
+				return QuestionMessages.QuestionUsedInSurveyCannotBeDeleted;
+
+			return null;
 		}
 		#endregion
 	}

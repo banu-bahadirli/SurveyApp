@@ -16,5 +16,10 @@ public class CreateSurveyCommandValidator : AbstractValidator<CreateSurveyComman
 		RuleFor(x => x.EndDate)
 			.GreaterThan(x => x.StartDate).WithMessage("Bitiş tarihi, başlangıç tarihinden sonra olmalıdır.");
 
+		RuleFor(x => x.QuestionIds)
+			.NotEmpty().WithMessage("Anket soruları boş olamaz.");
+
+		RuleFor(x => x.UserIds)
+			.NotEmpty().WithMessage("Anket kullanıcıları boş olamaz.");
 	}
 }

@@ -7,5 +7,7 @@
 		public const string QuestionCreated = "Soru başarıyla kaydedildi.";
 		public const string QuestionNotFound = "Soru bulunamadı.";
 		public const string SelectedTemplateNotFound = "Seçilen cevap şablonu bulunamadı";
+		public const string QuestionUsedInSurveyCannotBeDeleted ="Bu soru bir ankette kullanıldığı için silinemez.";
 	}
 }
+

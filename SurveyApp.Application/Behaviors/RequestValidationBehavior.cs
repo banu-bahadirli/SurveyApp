@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace SurveyApp.Application.Behaviors;
 
-public class RequestValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+public class RequestValidationBehavior<TRequest, TResponse>
+	: IPipelineBehavior<TRequest, TResponse>
 	where TRequest : IRequest<TResponse>
 {
 	private readonly IEnumerable<IValidator<TRequest>> _validators;
@@ -26,8 +27,11 @@ public class RequestValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
 		{
 			var context = new ValidationContext<TRequest>(request);
 
-			var failures = _validators
-				.Select(v => v.Validate(context))
+			var validationResults = await Task.WhenAll(
+				_validators.Select(v => v.ValidateAsync(context, cancellationToken))
+			);
+
+			var failures = validationResults
 				.SelectMany(r => r.Errors)
 				.Where(f => f != null)
 				.ToList();

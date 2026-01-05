@@ -27,7 +27,7 @@ namespace SurveyApp.Application.Features.Auth.Login.Commands
 
 			public async Task<LoginResponse> Handle(LoginCommand command, CancellationToken cancellationToken)
 			{
-				//1.email ile kullanıcı kontrolü
+				#region email ile kullanıcı kontrolü
 				var user = await _userRepository.GetAsync(u => u.Email == command.Email);
 				if(user == null)
 				{
@@ -37,8 +37,9 @@ namespace SurveyApp.Application.Features.Auth.Login.Commands
 						Message = LoginMessages.UserNotFound
 					};
 				}
+				#endregion
 
-				//2.şifre doğrulama
+				#region 
 				if (!HashingHelper.VerifyPasswordHash(command.Password, user.PasswordHash, user.PasswordSalt))
 				{
 					return new LoginResponse
@@ -47,15 +48,15 @@ namespace SurveyApp.Application.Features.Auth.Login.Commands
 						Message =LoginMessages.InvalidEmailPassword
 					};
 				}
+				#endregion
 
 
-				// 3. Kullanıcının claimlerini al
+				#region Kullanıcının claimlerini al
 				var operationClaims = await _userOperationClaimRepository.GetOperationClaimsByUserIdAsync(user.Id);
+				#endregion
 
-				// 4. AccessToken oluştur
+
 				var accessToken = _tokenHelper.CreateToken(user, operationClaims);
-
-				// 5. Response map et
 				var response = new LoginResponse
 				{
 					Id = user.Id,
