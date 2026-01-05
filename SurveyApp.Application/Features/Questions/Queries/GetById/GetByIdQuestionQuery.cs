@@ -29,7 +29,7 @@ namespace SurveyApp.Application.Features.Questions.Queries.GetById
 			{
 				var question = await _questionRespository.GetAsync(
 					c => c.Id == request.Id,
-					include: q => q.Include(x => x.AnswerTemplate) // ⬅ burada ilişkiyi include ettik
+					include: q => q.Include(x => x.AnswerTemplate) 
 				);
 
 				return _mapper.Map<GetByIdQuestionResponse>(question);

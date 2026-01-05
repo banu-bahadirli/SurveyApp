@@ -16,19 +16,6 @@ namespace SurveyApp.Application.Features.Questions.Rules
 			_surveyQuestionRepository = surveyQuestionRepository;
 		}
 
-		#region Şablon var mı ve cevap tipi dolu mu?
-		public async Task<string?> AnswerTemplateMustExist(int answerTemplateId)
-		{
-			var template = await _answerTemplateRepository.GetAsync(
-				at => at.Id == answerTemplateId
-			);
-
-			if (template == null)
-				return QuestionMessages.SelectedTemplateNotFound;
-
-			return null;
-		}
-		#endregion
 
 		#region Soru ankette kullanılıyorsa silinemez
 		public async Task<string?> QuestionCannotBeDeletedIfUsedInSurvey(int questionId)

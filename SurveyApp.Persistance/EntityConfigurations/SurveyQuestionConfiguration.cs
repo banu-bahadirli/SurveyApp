@@ -20,7 +20,7 @@ namespace SurveyApp.Persistence.EntityConfigurations
 
 			// Survey ile ilişki
 			builder.HasOne(sq => sq.Survey)
-				   .WithMany(s => s.SurveyQuestions) // Survey entity’de collection var
+				   .WithMany(s => s.SurveyQuestions) 
 				   .HasForeignKey(sq => sq.SurveyId)
 				   .OnDelete(DeleteBehavior.Cascade);
 

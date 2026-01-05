@@ -8,7 +8,6 @@ using SurveyApp.Application.Features.AnswerTemplates.Queries.GetById;
 using SurveyApp.Application.Features.AnswerTemplates.Queries.GetList;
 
 
-
 namespace SurveyApp.WebApi.Controllers
 {
 	[Route("api/[controller]")]

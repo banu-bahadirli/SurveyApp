@@ -2,13 +2,13 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SurveyApp.Application.Services.Repositories;
-using SurveyApp.Application.Features.Questions.Queries.GetList.Dtos;
 
 
 namespace SurveyApp.Application.Features.Questions.Queries.GetList
 {
 	public class GetListQuestionQuery : IRequest<List<GetListQuestionResponse>>
 	{
+		public string? SearchText { get; set; }
 		public class GetListQuestionQueryHandler
 			: IRequestHandler<GetListQuestionQuery, List<GetListQuestionResponse>>
 		{
@@ -23,19 +23,19 @@ namespace SurveyApp.Application.Features.Questions.Queries.GetList
 				_mapper = mapper;
 			}
 
-			public async Task<List<GetListQuestionResponse>> Handle(
-				GetListQuestionQuery request,
-				CancellationToken cancellationToken)
+			public async Task<List<GetListQuestionResponse>> Handle(GetListQuestionQuery request,CancellationToken cancellationToken)
 			{
-				// Include ile AnswerTemplate ve Options'ları da getiriyoruz
 				var questions = await _questionRespository.GetListNoPaginationAsync(
-					include: q => q.Include(x => x.AnswerTemplate)
-								   .ThenInclude(t => t.Options),
+					predicate: q =>
+						string.IsNullOrEmpty(request.SearchText) ||
+						q.Text.Contains(request.SearchText),
+					include: q => q
+						.Include(x => x.AnswerTemplate)
+						.ThenInclude(t => t.Options),
 					enableTracking: false,
 					cancellationToken: cancellationToken
 				);
 
-				// AutoMapper ile DTO'ya map
 				return _mapper.Map<List<GetListQuestionResponse>>(questions);
 			}
 		}

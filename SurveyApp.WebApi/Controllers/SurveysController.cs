@@ -63,6 +63,7 @@ public class SurveysController : BaseController
 	}
 
 	[HttpGet("{surveyId}/completed-users")]
+	[Authorize(Roles = "Admin")]
 	public async Task<IActionResult> GetCompletedSurveyUsers(int surveyId)
 	{
 		var users = await Mediator.Send(new GetCompletedSurveyUserQuery { SurveyId = surveyId });
@@ -70,6 +71,7 @@ public class SurveysController : BaseController
 	}
 
 	[HttpGet("{surveyId}/not-completed-users")]
+	[Authorize(Roles = "Admin")]
 	public async Task<IActionResult> GetNotCompletedSurveyUsers(int surveyId)
 	{
 		var users = await Mediator.Send(new GetNotCompletedSurveyUserQuery { SurveyId = surveyId });
@@ -77,6 +79,7 @@ public class SurveysController : BaseController
 	}
 
 	[HttpGet("{surveyId}/user/{userId}/answers")]
+	[Authorize(Roles = "Admin")]
 	public async Task<IActionResult> GetUserSurveyAnswers(int surveyId, int userId)
 	{
 		var answers = await Mediator.Send(new GetUserSurveyAnswersQuery { SurveyId = surveyId, UserId = userId });

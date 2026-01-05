@@ -10,7 +10,7 @@ namespace SurveyApp.Application.Features.Surveys.Commands.SubmitAnswers
 	{
 		public int UserSurveyId { get; set; }
 		public bool Success { get; set; }
-		public string Message { get; set; } // Kaç soru cevaplandı
+		public string Message { get; set; } 
 	}
 
 }

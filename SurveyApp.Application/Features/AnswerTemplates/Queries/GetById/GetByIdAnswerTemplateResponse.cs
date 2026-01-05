@@ -10,7 +10,7 @@ namespace SurveyApp.Application.Features.AnswerTemplates.Queries.GetById;
 
 public class GetByIdAnswerTemplateResponse
 {
-	public string Name { get; set; }  // Şablon adı
-	public int OptionCount { get; set; }  // 2-4 arası
+	public string Name { get; set; }  
+	public int OptionCount { get; set; }  
 	public List<AnswerOptionDto> Options { get; set; }
 }

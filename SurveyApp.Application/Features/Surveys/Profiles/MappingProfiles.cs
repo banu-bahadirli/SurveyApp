@@ -7,7 +7,6 @@ using SurveyApp.Application.Features.Surveys.Queries.GetList;
 using SurveyApp.Application.Features.Surveys.Queries.GetNotCompletedSurveyUser;
 using SurveyApp.Application.Features.Surveys.Queries.GetUserActiveSurveys;
 using SurveyApp.Application.Features.Surveys.Queries.GetUserSurveyAnswers;
-using SurveyApp.Core.Persistance.Repositories;
 using SurveyApp.Domain.Entities;
 
 namespace SurveyApp.Application.Features.Surveys.Profiles
@@ -16,13 +15,12 @@ namespace SurveyApp.Application.Features.Surveys.Profiles
 	{
 		public MappingProfiles()
 		{
-			CreateMap<Survey, CreateSurveyCommand>().ReverseMap();
+			CreateMap<CreateSurveyCommand, Survey>().ReverseMap();
+			CreateMap<UpdateSurveyCommand, Survey>().ReverseMap();
+			CreateMap<DeleteSurveyCommand, Survey>().ReverseMap();
+
 			CreateMap<Survey, CreatedSurveyResponse>().ReverseMap();
-
-			CreateMap<Survey, UpdateSurveyCommand>().ReverseMap();
 			CreateMap<Survey, UpdatedSurveyResponse>().ReverseMap();
-
-			CreateMap<Survey, DeleteSurveyCommand>().ReverseMap();
 			CreateMap<Survey, DeletedSurveyResponse>().ReverseMap();
 
 			CreateMap<Survey, GetByIdSurveyResponse>()
@@ -33,37 +31,31 @@ namespace SurveyApp.Application.Features.Surveys.Profiles
 				.ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.ToString("yyyy-MM-dd")))
 				.ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate.ToString("yyyy-MM-dd")));
 
-			CreateMap<Paginate<Survey>, Paginate<GetListSurveyResponse>>();
-
 			CreateMap<UserSurvey, GetUserActiveSurveyResponse>()
-				.ForMember(dest => dest.SurveyId, opt => opt.MapFrom(src => src.Survey!.Id))
-				.ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Survey!.Title))
-				.ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Survey!.Description))
-				.ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.Survey!.StartDate))
-				.ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.Survey!.EndDate));
+				.ForMember(dest => dest.SurveyId, opt => opt.MapFrom(src => src.Survey != null ? src.Survey.Id : 0))
+				.ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Survey != null ? src.Survey.Title : string.Empty))
+				.ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Survey != null ? src.Survey.Description : string.Empty))
+				.ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.Survey != null ? src.Survey.StartDate : default))
+				.ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.Survey != null ? src.Survey.EndDate : default));
 
 			CreateMap<UserSurvey, GetCompletedSurveyUserResponse>()
-				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.User!.Id))
-				.ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User!.FirstName))
-				.ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User!.LastName))
-				.ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User!.Email));
+				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.User != null ? src.User.Id : 0))
+				.ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User != null ? src.User.FirstName : string.Empty))
+				.ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User != null ? src.User.LastName : string.Empty))
+				.ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User != null ? src.User.Email : string.Empty));
 
 			CreateMap<UserSurvey, GetNotCompletedSurveyUserResponse>()
-				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.User!.Id))
-				.ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User!.FirstName))
-				.ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User!.LastName))
-				.ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User!.Email));
+				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.User != null ? src.User.Id : 0))
+				.ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User != null ? src.User.FirstName : string.Empty))
+				.ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User != null ? src.User.LastName : string.Empty))
+				.ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User != null ? src.User.Email : string.Empty));
 
 			CreateMap<UserSurveyAnswer, GetUserSurveyAnswerResponse>()
-			.ForMember(dest => dest.QuestionId, opt => opt.MapFrom(src => src.QuestionId))
-			.ForMember(dest => dest.QuestionText, opt => opt.MapFrom(src => src.Question != null ? src.Question.Text : string.Empty))
-			.ForMember(dest => dest.AnswerText, opt => opt.MapFrom(src => "")) // Eğer metin cevabı olacaksa buraya bağlanabilir
-			.ForMember(dest => dest.AnswerOptionId, opt => opt.MapFrom(src => (int?)src.SelectedOptionId))
-			.ForMember(dest => dest.AnswerOptionText, opt => opt.MapFrom(src => src.SelectedOption != null ? src.SelectedOption.Text : null));
-
-
-
-
+				.ForMember(dest => dest.QuestionId, opt => opt.MapFrom(src => src.QuestionId))
+				.ForMember(dest => dest.QuestionText, opt => opt.MapFrom(src => src.Question != null ? src.Question.Text : string.Empty))
+				.ForMember(dest => dest.AnswerText, opt => opt.MapFrom(src => string.Empty)) // metin cevabı yoksa boş
+				.ForMember(dest => dest.AnswerOptionId, opt => opt.MapFrom(src => (int?)src.SelectedOptionId))
+				.ForMember(dest => dest.AnswerOptionText, opt => opt.MapFrom(src => src.SelectedOption != null ? src.SelectedOption.Text : null));
 		}
 	}
 }

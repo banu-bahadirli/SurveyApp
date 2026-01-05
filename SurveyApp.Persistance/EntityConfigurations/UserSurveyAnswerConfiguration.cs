@@ -9,7 +9,7 @@ namespace SurveyApp.Persistence.EntityConfigurations
 		public void Configure(EntityTypeBuilder<UserSurveyAnswer> builder)
 		{
 			builder.ToTable("UserSurveyAnswers")
-				   .HasKey(a => a.Id); // Tekil PK
+				   .HasKey(a => a.Id); 
 
 			builder.Property(a => a.Id).IsRequired();
 			builder.Property(a => a.UserSurveyId).IsRequired();

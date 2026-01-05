@@ -13,13 +13,11 @@ namespace SurveyApp.Persistance
 	{
 		public static IServiceCollection AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
 		{
-			// DbContext
 			services.AddDbContext<BaseDbContext>(options =>
 			{
 				options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
 			});
 
-			// Repositories
 			services.AddScoped<IUserRepository, UserRepository>();
 			services.AddScoped<IUserOperationClaimRepository, UserOperationClaimRepository>();
 			services.AddScoped<IOperationClaimRepository, OperationClaimRepository>();

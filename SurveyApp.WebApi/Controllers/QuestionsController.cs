@@ -38,11 +38,16 @@ namespace SurveyApp.WebApi.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> GetList([FromQuery] GetListQuestionQuery getListQuestionQuery)
+		public async Task<IActionResult> GetList([FromQuery] string? searchText)
 		{
-			var result = await Mediator.Send(getListQuestionQuery);
+			var result = await Mediator.Send(new GetListQuestionQuery
+			{
+				SearchText = searchText
+			});
+
 			return Ok(result);
 		}
+
 
 		[HttpGet("{id}")]
 		public async Task<IActionResult> GetById([FromRoute] int id)

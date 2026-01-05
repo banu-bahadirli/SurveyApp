@@ -17,11 +17,11 @@ namespace SurveyApp.Application.Features.AnswerTemplates.Profiles
 			CreateMap<AnswerTemplate, CreateAnswerTemplateCommand>().ReverseMap();
 			CreateMap<AnswerTemplate, CreatedAnswerTemplateResponse>().ReverseMap();
 
-			// Update & Response
+			
 			CreateMap<AnswerTemplate, UpdateAnswerTemplateCommand>().ReverseMap();
 			CreateMap<AnswerTemplate, UpdatedAnswerTemplateResponse>().ReverseMap();
 
-			// List & GetById
+		
 			CreateMap<AnswerTemplate, GetListAnswerTemplateResponse>()
 				.ForMember(dest => dest.Options, opt => opt.MapFrom(src => src.Options))
 				.ReverseMap();
@@ -30,10 +30,10 @@ namespace SurveyApp.Application.Features.AnswerTemplates.Profiles
 				.ForMember(dest => dest.Options, opt => opt.MapFrom(src => src.Options))
 				.ReverseMap();
 
-			// Option Mapping
+			
 			CreateMap<AnswerOption, AnswerOptionDto>().ReverseMap();
 
-			// Template DTO sadece gerektiğinde
+			
 			CreateMap<AnswerTemplate, AnswerTemplateDto>().ReverseMap();
 
 		}

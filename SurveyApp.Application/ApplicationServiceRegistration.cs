@@ -28,8 +28,6 @@ public static class ApplicationServiceRegistration
 		services.AddScoped<QuestionBusinessRules>();
 		services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 		services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
-
-
 		return services;
 	}
 }

@@ -10,17 +10,15 @@ using System.Threading.Tasks;
 
 namespace SurveyApp.Application.Features.Surveys.Queries.GetList;
 
-public class GetListSurveyQuery : IRequest<Paginate<GetListSurveyResponse>>
+public class GetListSurveyQuery : IRequest<List<GetListSurveyResponse>>
 {
-	public int PageIndex { get; set; }
-	public int PageSize { get; set; }
 	public string? SearchText { get; set; }
 	public DateTime? StartDate { get; set; }
 	public DateTime? EndDate { get; set; }
 
 
 	public class GetListSurveyQueryHandler
-		: IRequestHandler<GetListSurveyQuery, Paginate<GetListSurveyResponse>>
+		: IRequestHandler<GetListSurveyQuery,List<GetListSurveyResponse>>
 	{
 		private readonly ISurveyRepository _surveyRepository;
 		private readonly IMapper _mapper;
@@ -31,9 +29,9 @@ public class GetListSurveyQuery : IRequest<Paginate<GetListSurveyResponse>>
 			_mapper = mapper;
 		}
 
-		public async Task<Paginate<GetListSurveyResponse>> Handle(GetListSurveyQuery request, CancellationToken cancellationToken)
+		public async Task<List<GetListSurveyResponse>> Handle(GetListSurveyQuery request, CancellationToken cancellationToken)
 		{
-			var surveys = await _surveyRepository.GetListAsync(
+			var surveys = await _surveyRepository.GetListNoPaginationAsync(
 							predicate: s =>
 								(
 									string.IsNullOrEmpty(request.SearchText) ||
@@ -42,12 +40,10 @@ public class GetListSurveyQuery : IRequest<Paginate<GetListSurveyResponse>>
 								) &&
 								(!request.StartDate.HasValue || s.StartDate >= request.StartDate.Value) &&
 								(!request.EndDate.HasValue || s.EndDate <= request.EndDate.Value),
-							index: request.PageIndex,
-							size: request.PageSize,
 							cancellationToken: cancellationToken
 						);
 
-			var response = _mapper.Map<Paginate<GetListSurveyResponse>>(surveys);
+			var response = _mapper.Map<List<GetListSurveyResponse>>(surveys);
 			return response;
 		}
 	}

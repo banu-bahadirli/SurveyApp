@@ -65,7 +65,8 @@ namespace SurveyApp.Application.Features.Users.Commands.Create
 
 				var createdUser = await _userRepository.AddAsync(user);
 
-				// Default "User" rolünü DB'de kontrol et, yoksa ekle
+				#region Default "User" rolünü DB'de kontrol et, yoksa ekle
+
 				var userClaim = await _operationClaimRepository.GetAsync(c => c.Name == GeneralOperationClaims.User);
 				if (userClaim == null)
 				{
@@ -77,10 +78,14 @@ namespace SurveyApp.Application.Features.Users.Commands.Create
 					userClaim = await _operationClaimRepository.AddAsync(userClaim);
 				}
 
-				// Kullanıcıya User rolünü bağla
+				#endregion
+
+                #region Kullanıcıya User rolünü bağla
+
 				await _userOperationClaimRepository.AddAsync(new UserOperationClaim(createdUser.Id, userClaim.Id));
 
-				// Response oluştur
+				#endregion
+
 				var response = _mapper.Map<CreatedUserResponse>(createdUser);
 				response.Message = UserMessages.UserCreated;
 				response.Success = true;

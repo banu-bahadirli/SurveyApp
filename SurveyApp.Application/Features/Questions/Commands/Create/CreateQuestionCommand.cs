@@ -22,26 +22,14 @@ public class CreateQuestionCommand : IRequest<CreatedQuestionResponse>
 
 		public CreateQuestionCommandHandler(
 			IQuestionRepository questionRespository,
-			IMapper mapper,
-			QuestionBusinessRules questionBusinessRules)
+			IMapper mapper)
 		{
 			_questionRespository = questionRespository;
 			_mapper = mapper;
-			_questionBusinessRules = questionBusinessRules;
 		}
 
 		public async Task<CreatedQuestionResponse> Handle(CreateQuestionCommand command, CancellationToken cancellationToken)
 		{
-			var businessMessage =  await _questionBusinessRules.AnswerTemplateMustExist(command.AnswerTemplateId);
-			if (businessMessage != null)
-			{
-				return new CreatedQuestionResponse
-				{
-					Success = false,
-					Message = businessMessage
-				};
-			}
-
 			var question = _mapper.Map<Question>(command);
 			var createdQuestion = await _questionRespository.AddAsync(question);
 
