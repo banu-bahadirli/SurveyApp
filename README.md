@@ -6,11 +6,13 @@ Kullanıcıların anket oluşturmasına, yönetmesine ve cevaplamasına olanak t
 ## Kullanılan Teknolojiler
 - **.NET 9**
 - Clean Architecture prensiplerine uygun katmanlı yapı oluşturuldu.
-- Entity Framework Core (ORM) kullanıldı.			- 
--Authentication & Authorization: JWT Token tabanlı kimlik doğrulama yapıldı.
+- Entity Framework Core (ORM) kullanıldı.	
+- Veritabanı Yönetimi için Code-First yaklaşımı ve Repository pattern 
+- Authentication & Authorization: JWT Token tabanlı kimlik doğrulama yapıldı.
 - RESTful API geliştirme
 - FluentValidation (request doğrulama)
 - MediatR (CQRS ve pipeline behavior)
+
 
 
 ## Proje Yapısı
@@ -101,12 +103,9 @@ API katmanıdır.
 ## API Endpointleri
 
 | Method | Endpoint | Açıklama |
-|---|---|---|
-| GET | /api/todos | Tüm todolar |
-| GET | /api/todos/{id} | Id’ye göre todo |
-| POST | /api/todos | Yeni todo ekle |
-| PUT | /api/todos/{id} | Todo güncelle |
-| DELETE | /api/todos/{id} | Todo sil |
-
-
-
+|--------|----------|----------|
+| GET    | /api/surveys | Tüm anketleri listeler |
+| GET    | /api/surveys/{id} | Id’ye göre anket getirir |
+| POST   | /api/surveys | Yeni anket oluşturur |
+| PUT    | /api/surveys/{id} | Anket günceller |
+| DELETE | /api/surveys/{id} | Anket siler |
