@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+ï»¿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SurveyApp.Application;
@@ -6,13 +6,15 @@ using SurveyApp.Core;
 using SurveyApp.Core.Security.Encryption;
 using SurveyApp.Core.Security.JWT;
 using SurveyApp.Persistance;
+using SurveyApp.Core.Exceptions.Extensions;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Controllers
 builder.Services.AddControllers();
 
-// Swagger + JWT Authorize desteði
+// Swagger + JWT Authorize desteÄŸi
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -22,7 +24,7 @@ builder.Services.AddSwaggerGen(c =>
 		Version = "v1"
 	});
 
-	// JWT Tanýmý
+	// JWT TanÄ±mÄ±
 	c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
 	{
 		Name = "Authorization",
@@ -108,12 +110,17 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-// Swagger
 app.UseSwagger();
-app.UseSwaggerUI();
+
+app.UseSwaggerUI(c =>
+{
+	c.SwaggerEndpoint("/swagger/v1/swagger.json", "SurveyApp API v1");
+	c.RoutePrefix = "swagger"; 
+});
 
 app.UseCors("AllowReact"); 
 app.UseHttpsRedirection();
+app.ConfigureCustomExceptionMiddleware();
 
 app.UseAuthentication();
 app.UseAuthorization(); 

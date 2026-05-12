@@ -20,72 +20,71 @@ namespace SurveyApp.Application.Features.Surveys.Commands.SubmitAnswers
 	{
 		private readonly IUserSurveyRepository _userSurveyRepository;
 		private readonly IUserSurveyAnswerRepository _userSurveyAnswerRepository;
-		private readonly ITransactionalRepository _transactionalRepository;
+
 
 		public SubmitSurveyAnswersCommandHandler(
 			IUserSurveyRepository userSurveyRepository,
-			IUserSurveyAnswerRepository userSurveyAnswerRepository,
-			ITransactionalRepository transactionalRepository)
+			IUserSurveyAnswerRepository userSurveyAnswerRepository)
 		{
 			_userSurveyRepository = userSurveyRepository;
 			_userSurveyAnswerRepository = userSurveyAnswerRepository;
-			_transactionalRepository = transactionalRepository;
 		}
 
 		public async Task<SubmitSurveyAnswersResponse> Handle(
 			SubmitSurveyAnswersCommand request,
 			CancellationToken cancellationToken)
 		{
-			await _transactionalRepository.BeginTransactionAsync();
+			//await _transactionalRepository.BeginTransactionAsync();
 
-			try
-			{
-				var userSurvey = await _userSurveyRepository.GetAsync(
-					us => us.SurveyId == request.SurveyId && us.UserId == request.UserId &&
-					!us.IsCompleted,
-					include: q => q.Include(us => us.Survey),
-					enableTracking: true,
-					cancellationToken: cancellationToken
-				);
+			//try
+			//{
+			//	var userSurvey = await _userSurveyRepository.GetAsync(
+			//		us => us.SurveyId == request.SurveyId && us.UserId == request.UserId &&
+			//		!us.IsCompleted,
+			//		include: q => q.Include(us => us.Survey),
+			//		enableTracking: true,
+			//		cancellationToken: cancellationToken
+			//	);
 
-				if (userSurvey == null)
-				{
-					return new SubmitSurveyAnswersResponse
-					{
-						Success = false,
-						Message = SurveyMessages.SurveyAlreadyFilled
-					};
-				}
+			//	if (userSurvey == null)
+			//	{
+			//		return new SubmitSurveyAnswersResponse
+			//		{
+			//			Success = false,
+			//			Message = SurveyMessages.SurveyAlreadyFilled
+			//		};
+			//	}
 
-				foreach (var answer in request.Answers)
-				{
-					var userAnswer = new UserSurveyAnswer
-					{
-						UserSurveyId = userSurvey.Id,
-						QuestionId = answer.QuestionId,
-						SelectedOptionId = answer.SelectedOptionId
-					};
+			//	foreach (var answer in request.Answers)
+			//	{
+			//		var userAnswer = new UserSurveyAnswer
+			//		{
+			//			UserSurveyId = userSurvey.Id,
+			//			QuestionId = answer.QuestionId,
+			//			SelectedOptionId = answer.SelectedOptionId
+			//		};
 
-					await _userSurveyAnswerRepository.AddAsync(userAnswer, cancellationToken);
-				}
+			//		await _userSurveyAnswerRepository.AddAsync(userAnswer, cancellationToken);
+			//	}
 
-				userSurvey.IsCompleted = true;
-				await _userSurveyRepository.UpdateAsync(userSurvey, cancellationToken);
+			//	userSurvey.IsCompleted = true;
+			//	await _userSurveyRepository.UpdateAsync(userSurvey, cancellationToken);
 
-				await _transactionalRepository.CommitTransactionAsync();
+			//	await _transactionalRepository.CommitTransactionAsync();
 
-				return new SubmitSurveyAnswersResponse
-				{
-					UserSurveyId = userSurvey.Id,
-					Success = true,
-					Message = SurveyMessages.SurveyAnswerCompleted
-				};
-			}
-			catch
-			{
-				await _transactionalRepository.RollbackTransactionAsync();
-				throw;
-			}
+			//	return new SubmitSurveyAnswersResponse
+			//	{
+			//		UserSurveyId = userSurvey.Id,
+			//		Success = true,
+			//		Message = SurveyMessages.SurveyAnswerCompleted
+			//	};
+			//}
+			//catch
+			//{
+			//	await _transactionalRepository.RollbackTransactionAsync();
+			//	throw;
+			//}
+			return null;
 		}
 	}
 }

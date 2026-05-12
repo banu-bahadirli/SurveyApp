@@ -12,7 +12,7 @@ namespace SurveyApp.WebApi.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	[Authorize(Roles = "Admin")]
+	//[Authorize(Roles = "Admin")]
 	public class AnswerTemplatesController : BaseController
 	{
 		[HttpGet]

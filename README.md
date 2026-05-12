@@ -4,17 +4,13 @@ Kullanıcıların anket oluşturmasına, yönetmesine ve cevaplamasına olanak t
 
 
 ## Kullanılan Teknolojiler
-
-•	.NET 9
-•	Clean Architecture prensiplerine uygun katmanlı yapı oluşturuldu.
-o	Core Layer: Domain entities, interfaces, business rules
-o	Application Layer: Use cases, DTOs, validators, application logic
-o	Infrastructure Layer: Data access, external services, ORM implementation
-o	API Layer: Controllers, middleware, filters
-•	ORM olarak Entity Framework Core kullanıldı.
-•	Authentication & Authorization: JWT Token tabanlı kimlik doğrulama yapıldı.
-•	RESTful API geliştirildi.
-
+- **.NET 9**
+- Clean Architecture prensiplerine uygun katmanlı yapı oluşturuldu.
+- Entity Framework Core (ORM) kullanıldı.			- 
+-Authentication & Authorization: JWT Token tabanlı kimlik doğrulama yapıldı.
+- RESTful API geliştirme
+- FluentValidation (request doğrulama)
+- MediatR (CQRS ve pipeline behavior)
 
 
 ## Proje Yapısı
@@ -23,31 +19,28 @@ o	API Layer: Controllers, middleware, filters
 SurveyApp
 │
 ├── SurveyApp.Application
-│   ├── Interfaces
+│   ├── Behaviors
+│   ├── Features
 │   ├── Services
-│   ├── DTOs
-│   └── Features
+│   
 │
 ├── SurveyApp.Core
-│   ├── Entities
-│   ├── Common
-│   └── Constants
+│   ├── Exceptions
+│   ├── Persistance
+│   └── Security
 │
 ├── SurveyApp.Domain
 │   ├── Entities
-│   ├── Enums
-│   └── Rules
+│ 
 │
 ├── SurveyApp.Persistance
 │   ├── Context
-│   ├── Repositories
-│   ├── Configurations
-│   └── Migrations
+│   ├── EntityConfigurations
+│   ├── Migrations
+│   └── Repositories
 │
 ├── SurveyApp.WebApi
 │   ├── Controllers
-│   ├── Middleware
-│   ├── Extensions
 │   └── Program.cs
 │
 └── README.md

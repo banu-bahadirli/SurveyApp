@@ -1,14 +1,15 @@
 ﻿using FluentValidation;
 using MediatR;
+using SurveyApp.Core.Exceptions.Types;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ValidationException = SurveyApp.Core.Exceptions.Types.ValidationException;
 
 namespace SurveyApp.Application.Behaviors;
 
-public class RequestValidationBehavior<TRequest, TResponse>
-	: IPipelineBehavior<TRequest, TResponse>
+public class RequestValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
 	where TRequest : IRequest<TResponse>
 {
 	private readonly IEnumerable<IValidator<TRequest>> _validators;
@@ -18,28 +19,23 @@ public class RequestValidationBehavior<TRequest, TResponse>
 		_validators = validators;
 	}
 
-	public async Task<TResponse> Handle(
-		TRequest request,
-		RequestHandlerDelegate<TResponse> next,
-		CancellationToken cancellationToken)
+	public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
 	{
-		if (_validators.Any())
-		{
-			var context = new ValidationContext<TRequest>(request);
+		ValidationContext<object> context = new(request);
 
-			var validationResults = await Task.WhenAll(
-				_validators.Select(v => v.ValidateAsync(context, cancellationToken))
-			);
+		IEnumerable<ValidationExceptionModel> errors = _validators
+			.Select(validator => validator.Validate(context))
+			.SelectMany(result => result.Errors)
+			.Where(failure => failure != null)
+			.GroupBy(
+			   keySelector: p => p.PropertyName,
+			   resultSelector: (propertyName, errors) =>
+				  new ValidationExceptionModel(propertyName, errors.Select(e => e.ErrorMessage))
+			).ToList();
 
-			var failures = validationResults
-				.SelectMany(r => r.Errors)
-				.Where(f => f != null)
-				.ToList();
-
-			if (failures.Count > 0)
-				throw new ValidationException(failures);
-		}
-
-		return await next();
+		if (errors.Any())
+			throw new ValidationException(errors);
+		TResponse response = await next();
+		return response;
 	}
 }

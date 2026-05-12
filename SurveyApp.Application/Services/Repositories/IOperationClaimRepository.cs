@@ -1,5 +1,4 @@
 ﻿using SurveyApp.Core.Persistance.Repositories;
-
 using SurveyApp.Core.Security.Entities;
 using SurveyApp.Domain.Entities;
 using System;

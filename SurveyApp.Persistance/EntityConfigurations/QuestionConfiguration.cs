@@ -33,7 +33,9 @@ namespace SurveyApp.Persistence.EntityConfigurations
 				   .HasForeignKey(sq => sq.QuestionId)
 				   .OnDelete(DeleteBehavior.Restrict);
 
-			
+			builder.HasQueryFilter(q => !q.DeletedDate.HasValue);
+
+
 		}
 	}
 }
