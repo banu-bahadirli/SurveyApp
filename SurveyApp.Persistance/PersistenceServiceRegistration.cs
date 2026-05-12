@@ -28,8 +28,6 @@ namespace SurveyApp.Persistance
 			services.AddScoped<IAnswerTemplateRepository, AnswerTemplateRepository>();
 			services.AddScoped<IQuestionRepository, QuestionRepository>();
 			services.AddScoped<IUserSessionRepository, UserSessionRepository>();
-			services.AddScoped<ITransactionalRepository, EfTransactionalRepository<BaseDbContext>>();
-
 
 			return services;
 		}
