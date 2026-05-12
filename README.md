@@ -67,8 +67,6 @@ Ortak kullanılan temel yapıları içerir.
 
 - Base entity sınıfları
 - Ortak yardımcı sınıflar
-- Constants
-- Genel abstractions
 
 ---
 
@@ -77,7 +75,6 @@ Domain modellerini ve iş kurallarını içerir.
 
 - Entity modelleri
 - Domain kuralları
-- Enum yapıları
 
 ---
 
