@@ -1,12 +1,13 @@
 ﻿using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using SurveyApp.Application.Behaviors;
 using SurveyApp.Application.Features.AnswerTemplates.Rules;
 using SurveyApp.Application.Features.Questions.Rules;
 using SurveyApp.Application.Features.Surveys.Rules;
 using SurveyApp.Application.Features.Users.Rules;
 using SurveyApp.Application.Validation;
+using SurveyApp.Core.Pipelines.Transaction;
+using SurveyApp.Core.Pipelines.Validation;
 using System.Reflection;
 
 
@@ -17,17 +18,20 @@ public static class ApplicationServiceRegistration
 	{
 
 		services.AddAutoMapper(Assembly.GetExecutingAssembly());
+		services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 		services.AddMediatR(configuration =>
 		{
 			configuration.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+			configuration.AddOpenBehavior(typeof(RequestValidationBehavior<,>));
+			configuration.AddOpenBehavior(typeof(TransactionScopeBehavior<,>));
 
 		});
 		services.AddScoped<SurveyBusinessRules>();
 		services.AddScoped<UserBusinessRules>();
 		services.AddScoped<AnswerTemplateBusinessRules>();
 		services.AddScoped<QuestionBusinessRules>();
-		services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-		services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
+
+
 		return services;
 	}
 }

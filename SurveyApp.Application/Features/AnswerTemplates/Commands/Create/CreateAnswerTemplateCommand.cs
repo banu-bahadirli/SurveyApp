@@ -5,9 +5,10 @@ using SurveyApp.Application.Features.AnswerTemplates.Constants;
 using SurveyApp.Application.Features.AnswerTemplates.Dtos;
 using SurveyApp.Application.Features.AnswerTemplates.Rules;
 using SurveyApp.Application.Services.Repositories;
+using SurveyApp.Core.Pipelines.Transaction;
 using SurveyApp.Domain.Entities;
 
-public class CreateAnswerTemplateCommand : IRequest<CreatedAnswerTemplateResponse>
+public class CreateAnswerTemplateCommand : IRequest<CreatedAnswerTemplateResponse>,ITransactionalRequest
 {
 	public string Name { get; set; } = null!;
 	public int OptionCount { get; set; }

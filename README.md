@@ -21,7 +21,7 @@ Kullanıcıların anket oluşturmasına, yönetmesine ve cevaplamasına olanak t
 SurveyApp
 │
 ├── SurveyApp.Application
-│   ├── Behaviors
+│   
 │   ├── Features
 │   ├── Services
 │   
@@ -30,6 +30,7 @@ SurveyApp
 │   ├── Exceptions
 │   ├── Persistance
 │   └── Security
+    ├── Pipelines
 │
 ├── SurveyApp.Domain
 │   ├── Entities

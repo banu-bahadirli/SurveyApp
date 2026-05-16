@@ -1,13 +1,14 @@
 ﻿using FluentValidation;
 using MediatR;
 using SurveyApp.Core.Exceptions.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
+using System.Text;
 using System.Threading.Tasks;
 using ValidationException = SurveyApp.Core.Exceptions.Types.ValidationException;
 
-namespace SurveyApp.Application.Behaviors;
+namespace SurveyApp.Core.Pipelines.Validation;
 
 public class RequestValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
 	where TRequest : IRequest<TResponse>
